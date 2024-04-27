@@ -1,0 +1,92 @@
+[
+  {
+    "title": "Gymify",
+    "location": "Tirana, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 5
+  },
+  {
+    "title": "Mos pi Mall",
+    "location": "Shkozet, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "@/assets/images/gym-background.jpg",
+    "quality": "Best price",
+    "localImage": true,
+    "rating": 4
+  },
+  {
+    "title": "Shijaku Gym",
+    "location": "Shijak, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../../assets/images/gym-background.jpg",
+    "quality": "Lowest price",
+    "localImage": true,
+    "rating": 3.1
+  },
+  {
+    "title": "Gymify",
+    "location": "Tirana, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 3.6
+  },
+  {
+    "title": "Mos pi Mall",
+    "location": "Shkozet, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "@/assets/images/gym-background.jpg",
+    "quality": "Best price",
+    "localImage": true,
+    "rating": 3.5
+  },
+  {
+    "title": "Shijaku Gym",
+    "location": "Shijak, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../../assets/images/gym-background.jpg",
+    "quality": "Lowest price",
+    "localImage": true,
+    "rating": 3.3
+  },
+  {
+    "title": "Gymify",
+    "location": "Tirana, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 4.9
+  },
+  {
+    "title": "Mos pi Mall",
+    "location": "Shkozet, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "@/assets/images/gym-background.jpg",
+    "quality": "Best price",
+    "localImage": true,
+    "rating": 4.1
+  },
+  {
+    "title": "Shijaku Gym",
+    "location": "Shijak, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "image": "../../assets/images/gym-background.jpg",
+    "quality": "Lowest price",
+    "localImage": true,
+    "rating": 3.2
+  }
+]

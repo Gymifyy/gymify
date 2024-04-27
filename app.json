@@ -30,10 +30,20 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
-      "expo-router"
+      "expo-router",
+      "expo-calendar"
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "extra": {
+      "router": {
+        "origin": false
+      },
+      "eas": {
+        "projectId": "2923e73b-da88-481c-b80b-08f749cc4b79"
+      }
+    },
+    "owner": "a.lvii"
   }
 }
