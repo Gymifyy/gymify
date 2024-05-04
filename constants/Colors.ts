@@ -4,6 +4,7 @@ export const Colors = {
   // Hard Coded Colors And values
   theme_orange: "#ea580c",
   tabBar: '#343a40',
+  gifBackground: '#e0e0e0',
   soft: {
     white: "#e2e8f0",
     gray: "#cbd5e1",
@@ -19,6 +20,7 @@ export const Colors = {
   inherit: 'inherit',
   current: 'currentColor',
   transparent: 'transparent',
+  darkTransparent: "rgba(15, 23, 41, 0.2)",
   black: '#000',
   white: '#fff',
   slate: {
@@ -35,6 +37,15 @@ export const Colors = {
     950: '#020617',
   },
   gray: {
+    transparent95: "rgba(229, 231, 235, 0.95)",
+    transparent90: "rgba(229, 231, 235, 0.90)",
+    transparent85: "rgba(229, 231, 235, 0.85)",
+    transparent80: "rgba(229, 231, 235, 0.80)",
+    transparent75: "rgba(229, 231, 235, 0.75)",
+    transparent70: "rgba(229, 231, 235, 0.70)",
+    transparent65: "rgba(229, 231, 235, 0.65)",
+    transparent55: "rgba(229, 231, 235, 0.55)",
+    transparent50: "rgba(229, 231, 235, 0.50)",
     50: '#f9fafb',
     100: '#f3f4f6',
     200: '#e5e7eb',

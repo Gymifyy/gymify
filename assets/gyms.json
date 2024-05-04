@@ -1,0 +1,35 @@
+[
+  {
+    "title": "Gymify",
+    "location": "Tirana, Albania",
+    "href": "/",
+    "description": "To render multiple columns, use the numColumns prop. Using this approach instead of a flexWrap layout can prevent conflicts with the item height logic.",
+    "total_members": 100,
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 5
+  },
+  {
+    "title": "Shijaku Group",
+    "location": "Shijaku, Albania",
+    "href": "/",
+    "description": "Nga shijaku e la",
+    "total_members": 100,
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 5
+  },
+  {
+    "title": "[Ass] Inc",
+    "location": "Tirana, Albania",
+    "href": "/",
+    "description": "Nuk e di ca te shkruj",
+    "total_members": 100,
+    "image": "../assets/images/gym-background.jpg",
+    "quality": "Closest to you",
+    "localImage": true,
+    "rating": 5
+  }
+]

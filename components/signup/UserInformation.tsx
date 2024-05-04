@@ -28,7 +28,7 @@ type Props = {
 }
 
 
-export function UserInformation({ firstName, lastName, weight, height, step, setStep, units, error, enrolledGyms, enrolledCourses, setUnits, proceedToNextStep, setError, setHeight, setWeight, setLastName, setFirstName }: Props) {
+export function UserInformation({ firstName, lastName, maxSteps, weight, height, step, setStep, units, error, enrolledGyms, enrolledCourses, setUnits, proceedToNextStep, setError, setHeight, setWeight, setLastName, setFirstName }: Props) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} style={{ width: '100%', height: '100%' }}>
       <MotionView

@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "gymify",
+    "name": "Gymify",
     "slug": "gymify",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "myapp",
+    "scheme": "gymify",
     "userInterfaceStyle": "automatic",
     "splash": {
       "image": "./assets/images/splash.png",
@@ -16,13 +16,25 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSCalendarsUsageDescription": "Allow $(PRODUCT_NAME) to access your calendars",
+        "NSRemindersUsageDescription": "Allow $(PRODUCT_NAME) to access your reminders",
+        "NSCalendarsFullAccessUsageDescription": "Allow $(PRODUCT_NAME) to access your calendars",
+        "NSRemindersFullAccessUsageDescription": "Allow $(PRODUCT_NAME) to access your reminders"
+      },
+      "bundleIdentifier": "com.a.lvii.gymify"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "permissions": [
+        "android.permission.READ_CALENDAR",
+        "android.permission.WRITE_CALENDAR"
+      ],
+      "package": "com.alvi.gymfiy"
     },
     "web": {
       "bundler": "metro",
@@ -44,6 +56,12 @@
         "projectId": "2923e73b-da88-481c-b80b-08f749cc4b79"
       }
     },
-    "owner": "a.lvii"
+    "owner": "a.lvii",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/2923e73b-da88-481c-b80b-08f749cc4b79"
+    }
   }
 }

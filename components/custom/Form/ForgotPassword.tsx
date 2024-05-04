@@ -14,7 +14,7 @@ export function ForgotPassword(): React.JSX.Element {
 
 const styles = StyleSheet.create({
   forgot_password_text: {
-    color: Colors.soft.white,
+    color: Colors.neutral["800"],
     letterSpacing: 0.4,
     padding: 3,
   },

@@ -4,13 +4,14 @@ import { Dispatch, ReactNode, SetStateAction, createContext, useEffect, useState
 type Props = { children: ReactNode }
 
 /** Auth Store Context */
-export const AuthStoreContext = createContext<{ session: AuthStoreContextType, setSession: Dispatch<SetStateAction<AuthStoreContextType>> }>({ session: null, setSession: () => { } });
-export type AuthStoreContextType = Session | null;
+export const AuthStoreContext = createContext<AuthContextType>({ session: null, setSession: () => { } });
+export type AuthContextType = { session: AuthSessionType, setSession: Dispatch<SetStateAction<AuthSessionType>> }
+export type AuthSessionType = Session | null;
 
 /** Auth Context Wrapper */
 export const AuthContext = ({ children }: Props) => {
   // SESSION
-  const [session, setSession] = useState<AuthStoreContextType>(null)
+  const [session, setSession] = useState<AuthSessionType>(null)
 
   // AUTH HANDLING
   useEffect(() => {

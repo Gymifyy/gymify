@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Colors } from '@/constants';
 import { Button } from '../skeleton';
 import { useState } from 'react';
@@ -30,7 +30,7 @@ export function SearchInput({ handleGymFilterByName }: Props): React.JSX.Element
         placeholderTextColor={Colors.slate["500"]}
         placeholder={"Search gyms"} />
       <Button onPress={() => { }} style={styles.search_input_button}>
-        <MaterialIcons color={sTerm ? Colors.slate["800"] : Colors.slate["500"]} size={24} name={"search"} />
+        <Octicons color={sTerm ? Colors.slate["800"] : Colors.slate["500"]} size={22} name={"search"} />
       </Button>
     </View>
   )
@@ -42,11 +42,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: '90%',
+    width: '85%',
     height: 50,
     marginTop: 20,
     borderRadius: 10,
-    backgroundColor: Colors.gray["300"],
+    borderWidth: 1,
+    borderColor: Colors.gray["300"],
+    backgroundColor: Colors.gray["200"],
   },
   search_input_button: {
     height: '100%',

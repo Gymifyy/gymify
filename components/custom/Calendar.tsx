@@ -21,7 +21,7 @@ export function Calendar({ selectedDate, setSelectedDate }: Props): React.JSX.El
         setSelectedDate(params.date);
       }
     },
-    []
+    [setSelectedDate]
   );
 
   return (
@@ -35,14 +35,13 @@ export function Calendar({ selectedDate, setSelectedDate }: Props): React.JSX.El
         firstDayOfWeek={1}
         displayFullDays
         onChange={handleOnChange}
+        timePicker={false}
         headerButtonColor={Colors.orange["600"]}
         selectedItemColor={Colors.orange["600"]}
-        // eslint-disable-next-line react-native/no-inline-styles
         selectedTextStyle={{
           fontWeight: 'bold',
-          color: Colors.slate["300"],
+          color: Colors.slate["100"],
         }}
-        // eslint-disable-next-line react-native/no-inline-styles
         todayContainerStyle={{
           borderWidth: 1,
         }}

@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native';
 import { Text, View } from 'react-native';
 import { Colors } from '@/constants';
+import Constants from 'expo-constants';
 
 export default function ProgramScreen() {
   return (
@@ -14,11 +15,11 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    paddingTop: 60,
+    paddingTop: Constants.statusBarHeight,
     margin: 0,
     flexDirection: 'column',
     justifyContent: 'center',
-    backgroundColor: Colors.soft.white,
+    backgroundColor: Colors.gray["100"],
   },
   title: {
     fontSize: 30,

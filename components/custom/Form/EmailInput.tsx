@@ -1,27 +1,27 @@
 import { StyleSheet, TextInput, View } from 'react-native';
-import { MaterialIcons } from '@expo/vector-icons';
+import { MaterialIcons, Octicons } from '@expo/vector-icons';
 import { Colors } from '@/constants';
 import { Button } from '@/components/skeleton';
 
-interface Props {
+type Props = {
   email: string,
+  variant: "light" | "dark",
   setEmail: React.Dispatch<React.SetStateAction<string>> | ((newEmail: string) => void),
 }
 
-export function EmailInput({ email, setEmail }: Props): React.JSX.Element {
+export function EmailInput({ email, setEmail, variant }: Props): React.JSX.Element {
   return (
     <View style={styles.email_group}>
       <TextInput
-        style={styles.email_input}
+        style={{ ...styles.email_input, color: variant === "dark" ? Colors.slate["200"] : Colors.soft.black, borderBottomColor: variant === "dark" ? Colors.soft.white : Colors.soft.black }}
         inputMode={"email"}
         maxLength={120}
         value={email}
         onChangeText={(newValue: string) => setEmail(newValue)}
-        keyboardType={"email-address"}
-        placeholderTextColor={Colors.soft.black}
+        placeholderTextColor={variant === "light" ? Colors.soft.black : Colors.soft.white}
         placeholder={"Email"} />
-      <Button onPress={() => { }} style={styles.email_button}>
-        <MaterialIcons color={Colors.soft.black} size={24} name={"email"} />
+      <Button style={{ ...styles.email_button, borderBottomColor: variant === "dark" ? Colors.soft.white : Colors.soft.black }}>
+        <Octicons color={variant === "dark" ? Colors.soft.white : Colors.soft.black} size={22} name={"mail"} />
       </Button>
     </View>
   )
@@ -30,31 +30,29 @@ const styles = StyleSheet.create({
   email_group: {
     display: "flex",
     flexDirection: "row",
-    alignItems: 'baseline',
+    alignItems: 'flex-end',
     justifyContent: 'center',
     backgroundColor: Colors.transparent,
   },
   email_button: {
     height: 'auto',
     backgroundColor: Colors.transparent,
-    borderBottomColor: Colors.soft.black,
     borderBottomWidth: 1.3,
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
-    paddingBottom: 3,
+    paddingBottom: 9,
   },
   email_input: {
     fontSize: 18,
-    color: Colors.soft.black,
     width: 200,
     paddingVertical: 15,
     paddingHorizontal: 4,
     backgroundColor: Colors.transparent,
-    borderBottomColor: Colors.soft.black,
     borderBottomWidth: 1.3,
     borderTopWidth: 0,
     borderLeftWidth: 0,
     borderRightWidth: 0,
   },
+
 });

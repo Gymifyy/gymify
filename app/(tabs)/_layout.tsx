@@ -1,27 +1,50 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Tabs } from "expo-router";
-import { StyleSheet } from "react-native";
-import { MaterialIcons } from "@expo/vector-icons";
+import { ViewStyle, Dimensions } from "react-native";
+import { Octicons } from "@expo/vector-icons";
 
 import { Colors } from "@/constants";
-import { useClientOnlyValue } from "@/components/hooks";
-import { AuthStoreContext } from "@/components/custom/AuthContext";
+import { AuthStoreContext } from "@/components/custom/context";
+
 // You can explore the built-in icon families and icons on the web at https://icons.expo.fyi/
 function TabBarIcon(props: {
-  name: React.ComponentProps<typeof MaterialIcons>["name"];
+  name: React.ComponentProps<typeof Octicons>["name"];
   color: string;
+  size?: number
 }) {
-  return <MaterialIcons size={28} style={{ marginBottom: -3 }} {...props} />;
+  const { size, ...otherProps } = props;
+  return <Octicons size={size ? size : 26} {...otherProps} />;
 }
 
 export default function TabLayout() {
+  const TabBarStyle: ViewStyle = {
+    width: 344,
+    height: 70,
+    elevation: 0,
+    position: "absolute",
+    bottom: 20,
+    // Device.Width / 2 -> Half of screen - Half of tab bar => Center
+    left: (Dimensions.get('window').width / 2) - (344 / 2),
+    backgroundColor: Colors.gray.transparent95,
+    alignSelf: 'center',
+    borderWidth: 1,
+    borderRadius: 20,
+    borderColor: Colors.gray["300"],
+    shadowColor: Colors.gray["600"],
+    shadowRadius: 5,
+    shadowOffset: { width: 3, height: 3 },
+    shadowOpacity: 0.3,
+  };
   const AuthContextStore = useContext(AuthStoreContext);
   return (
     <Tabs
       screenOptions={{
-        tabBarStyle: styles.tabBar,
+        title: "Gymify",
         tabBarActiveTintColor: Colors.tint,
-        headerShown: useClientOnlyValue(false, true),
+        tabBarInactiveTintColor: Colors.neutral["600"],
+        tabBarStyle: TabBarStyle,
+        headerShown: false,
+        tabBarLabelStyle: { padding: 0, margin: -14 }
       }}
     >
       <Tabs.Screen
@@ -29,6 +52,7 @@ export default function TabLayout() {
         options={{
           title: "Home",
           headerShown: false,
+          tabBarStyle: TabBarStyle,
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
@@ -37,7 +61,9 @@ export default function TabLayout() {
         options={{
           title: "Daily",
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="calendar-month" color={color} />,
+          tabBarStyle: TabBarStyle,
+          tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
+          href: !AuthContextStore.session?.user ? null : "/daily",
         }}
       />
       <Tabs.Screen
@@ -45,48 +71,30 @@ export default function TabLayout() {
         options={{
           title: "Program",
           headerShown: false,
-          tabBarIcon: ({ color }) => <TabBarIcon name="fitness-center" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="signup"
-        options={{
-          title: "Signup",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name={"login"} color={color} />
-          ),
-          href: null,
+          tabBarStyle: TabBarStyle,
+          tabBarIcon: ({ color }) => <TabBarIcon name="flame" color={color} />,
+          href: !AuthContextStore.session?.user ? null : "/program",
         }}
       />
       <Tabs.Screen
         name="login"
         options={{
           title: "Login",
-          headerShown: false,
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name={"login"} color={color} />
-          ),
+          tabBarStyle: TabBarStyle,
+          tabBarIcon: ({ color }) => <TabBarIcon name="sign-in" color={color} />,
           href: AuthContextStore.session?.user ? null : "/login",
         }}
       />
       <Tabs.Screen
-        name="user"
+        name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color }) => (
-            <TabBarIcon name={"person"} color={color} />
-          ),
-          headerShown: false,
-          href: AuthContextStore.session?.user ? "/user" : null,
+          tabBarStyle: TabBarStyle,
+          tabBarIcon: ({ color }) => <TabBarIcon name={"person"} color={color} />,
+          href: AuthContextStore.session?.user ? "/profile" : null,
         }}
       />
     </Tabs>
   );
 }
 
-const styles = StyleSheet.create({
-  tabBar: {
-    backgroundColor: Colors.gray["200"],
-  },
-});

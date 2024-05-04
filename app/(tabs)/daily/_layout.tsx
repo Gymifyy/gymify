@@ -3,8 +3,13 @@ import { Audio } from "expo-av";
 import { Colors } from '@/constants';
 import { Calendar } from '@/components/custom';
 import { useCallback, useEffect, useState } from 'react';
+import { scheduleNotification } from "@/utils/Notifications";
 import relativeTime from "dayjs/plugin/relativeTime";
 import dayjs, { Dayjs } from 'dayjs';
+import Constants from 'expo-constants';
+import { Button } from '@/components/skeleton';
+import { Octicons } from '@expo/vector-icons';
+import { NotificationRequestInput } from 'expo-notifications';
 
 dayjs.extend(relativeTime)
 
@@ -40,11 +45,26 @@ export default function CalendarScreen() {
     return <Text style={styles.display_date}>{sDate.from(today)}</Text>
   }, [selectedDate]);
 
+  async function notify() {
+    const request: NotificationRequestInput = {
+      content: {
+        title: `Hello a`,
+        body: 'Here is the notification body',
+      },
+      trigger: null,
+    }
+    await scheduleNotification(request);
+  }
+
   return (
     <View style={styles.container}>
       <View style={styles.center_contents}>
         <Calendar selectedDate={selectedDate} setSelectedDate={setSelectedDate} />
         {displayDate()}
+        <Button onPress={async () => { await notify() }} style={{ width: 120, display: 'flex', flexDirection: 'row', alignItems: 'center', alignContent: 'center', justifyContent: 'center', gap: 7, height: 50, paddingHorizontal: 7, paddingVertical: 3, borderWidth: 2, borderColor: Colors.blue["500"], borderRadius: 10, }}>
+          <Octicons size={24} name="mail" color={Colors.blue["500"]} />
+          <Text>Notify me</Text>
+        </Button>
       </View>
     </View>
   );
@@ -54,12 +74,12 @@ const styles = StyleSheet.create({
   container: {
     width: '100%',
     height: '100%',
-    paddingTop: 60,
+    paddingTop: Constants.statusBarHeight,
     margin: 0,
     flexDirection: 'column',
     justifyContent: 'flex-start',
     alignContent: 'center',
-    backgroundColor: Colors.soft.white,
+    backgroundColor: Colors.slate["100"],
   },
   center_contents: {
     width: '93%',
