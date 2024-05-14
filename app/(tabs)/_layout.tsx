@@ -25,7 +25,7 @@ export default function TabLayout() {
     bottom: 20,
     // Device.Width / 2 -> Half of screen - Half of tab bar => Center
     left: (Dimensions.get('window').width / 2) - (344 / 2),
-    backgroundColor: Colors.gray.transparent95,
+    backgroundColor: Colors.gray[100],
     alignSelf: 'center',
     borderWidth: 1,
     borderRadius: 20,
@@ -40,11 +40,11 @@ export default function TabLayout() {
     <Tabs
       screenOptions={{
         title: "Gymify",
-        tabBarActiveTintColor: Colors.tint,
-        tabBarInactiveTintColor: Colors.neutral["600"],
+        tabBarActiveTintColor: Colors.redBottomBar,
+        tabBarInactiveTintColor: Colors.gray["700"],
         tabBarStyle: TabBarStyle,
         headerShown: false,
-        tabBarLabelStyle: { padding: 0, margin: -14 }
+        tabBarLabelStyle: { padding: 0, margin: -14, fontSize: 11, fontWeight: "600" }
       }}
     >
       <Tabs.Screen
@@ -63,7 +63,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: TabBarStyle,
           tabBarIcon: ({ color }) => <TabBarIcon name="calendar" color={color} />,
-          href: !AuthContextStore.session?.user ? null : "/daily",
+          href: !AuthContextStore.session?.user || AuthContextStore.session?.user.user_metadata.isSuperAdmin ? null : "/daily",
         }}
       />
       <Tabs.Screen
@@ -73,7 +73,7 @@ export default function TabLayout() {
           headerShown: false,
           tabBarStyle: TabBarStyle,
           tabBarIcon: ({ color }) => <TabBarIcon name="flame" color={color} />,
-          href: !AuthContextStore.session?.user ? null : "/program",
+          href: !AuthContextStore.session?.user || AuthContextStore.session?.user.user_metadata.isSuperAdmin ? null : "/program",
         }}
       />
       <Tabs.Screen

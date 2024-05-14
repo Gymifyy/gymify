@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput, View } from 'react-native';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { Colors } from '@/constants';
 import { Button } from '../skeleton';
 import { useState } from 'react';
@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
-    width: '85%',
+    width: '87%',
     height: 50,
     marginTop: 20,
     borderRadius: 10,

@@ -1,16 +1,19 @@
 import { FlatList, Text, View } from 'react-native';
+import { useCallback, useContext, useEffect, useState } from 'react';
+import Constants from 'expo-constants';
 import { Loader } from '@/components/skeleton';
 import { GymCard } from '@/components/gym';
 import { Colors } from '@/constants';
 import { StyleSheet } from 'react-native';
 import { SearchInput, Header } from "@/components/custom";
-import { useCallback, useContext, useEffect, useState } from 'react';
-import Constants from 'expo-constants';
 import { User } from '@supabase/supabase-js';
 import { useIsFocused } from '@react-navigation/native';
 import { Tables } from '@/types/database.types';
 import { AuthContextType, AuthStoreContext } from '@/components/custom/context';
 import { supabase } from '@/utils/supabase';
+import { GymController } from '@/utils/Gym';
+import { getCurrentPositionAsync } from 'expo-location';
+import { sortBasedOnLocation } from '@/constants/utils';
 
 export default function HomeScreen() {
   const [user, setUser] = useState<User & Omit<Tables<"users">, "email" | "id" | "createdAt"> | null>(null);
@@ -18,15 +21,19 @@ export default function HomeScreen() {
   const [gyms, setGyms] = useState<Tables<"gyms">[]>([]);
   const [allGymsCopy, setAllGymsCopy] = useState<Tables<"gyms">[]>(gyms);
   const AuthContextStore = useContext<AuthContextType>(AuthStoreContext);
+
   const isFocused = useIsFocused();
+  const gymController: GymController = new GymController();
   const saveRendersTemp: User | null = user;
+  const currentIndexes = { from: 0, to: 9 };
+
   // Auth Handler
   useEffect(() => {
     async function getUser() {
       if (AuthContextStore.session) {
         // save re-renders 
         if (AuthContextStore.session.user.email === saveRendersTemp?.email) return;
-        const { data: users, error } = await supabase.from("users").select("username, firstName, lastName, enrolledCourses, enrolledGyms, weight, height, phoneNumber, bmi, profileImage, enrolledCoursesCount, enrolledGymsCount").eq("email", AuthContextStore.session.user.email as string);
+        const { data: users, error } = await supabase.from("users").select("username, firstName, completed_setup, isSuperAdmin, lastName, weight, height, phoneNumber, bmi, profileImage, enrolledCoursesCount, enrolledGymsCount, age, gender").eq("email", AuthContextStore.session.user.email as string);
         if (users && users.length >= 1) {
           const _user: Omit<Tables<"users">, "email" | "id" | "createdAt"> = users[0];
           setUser({ ...AuthContextStore.session.user, ..._user });
@@ -43,17 +50,24 @@ export default function HomeScreen() {
 
   // Handle Gyms
   useEffect(() => {
-    async function fetchGyms() {
-      const { data } = await supabase.from("gyms").select("*");
-      if (data) {
-        setGyms(data);
-        setAllGymsCopy(data);
-        setTimeout(() => {
-          setIsReadyToRender(true);
-        }, 120);
-      }
-    }
     if (isFocused) {
+      async function fetchGyms() {
+        const { data, error } = await gymController.getAllPaginated(currentIndexes.from, currentIndexes.to);
+        if (error) {
+          console.log({ error });
+        }
+        if (data) {
+          const location = await getCurrentPositionAsync();
+          const currentLocation = { latitude: location.coords.latitude, longitude: location.coords.longitude };
+          sortBasedOnLocation(data, currentLocation, (value) => {
+            setGyms(value);
+            setAllGymsCopy(value);
+          });
+          setTimeout(() => {
+            setIsReadyToRender(true);
+          }, 120);
+        }
+      }
       fetchGyms();
     }
   }, [isFocused]);
@@ -67,38 +81,43 @@ export default function HomeScreen() {
     setGyms(filteredGyms);
   }, [gyms]);
 
-  const renderItem = ({ item, index }: { item: Tables<"gyms">, index: number }) => (
-    <View style={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>{
-      isReadyToRender ?
-        <GymCard {...item} index={index} />
-        :
-        <View style={{ paddingVertical: 6, alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-          <Loader colorMode="light" width={"85%"} height={88} />
-        </View>
-    }
-    </View>
-  )
-  const renderItemKey = (gym: Tables<"gyms">, index: number) => `${gym}__${index}`;
-  const renderItemLayout = (_: any, index: number) => (
-    { length: 360, offset: 84 * index, index }
-  )
+  function renderItem({ item, index }: { item: Tables<"gyms">, index: number }) {
+    return (
+      <View style={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>{
+        isReadyToRender ?
+          <GymCard gym={item} index={index} />
+          :
+          <View style={{ paddingVertical: 6, alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+            <Loader colorMode="light" width={"85%"} height={88} />
+          </View>
+      }
+      </View>
+    )
+  }
+  function renderItemKey(gym: Tables<"gyms">, index: number) { return `${gym}__${index}` };
+  function renderItemLayout(_: any, index: number) {
+    return { length: 360, offset: 84 * index, index };
+  }
   return (
     <View style={{ width: '100%', height: '100%' }}>
       <View style={styles.container}>
-        {user ? <Header user={user} /> : null}
+        <Header />
         <SearchInput handleGymFilterByName={handleGymFilterByName} />
         {gyms && gyms.length >= 1 ?
-          <FlatList
-            data={gyms}
-            style={styles.gymsList}
-            initialNumToRender={8}
-            removeClippedSubviews={true}
-            maxToRenderPerBatch={10}
-            windowSize={8}
-            getItemLayout={renderItemLayout}
-            keyExtractor={renderItemKey}
-            renderItem={renderItem}
-          /> :
+          <>
+            <FlatList
+              data={gyms}
+              style={styles.gymsList}
+              initialNumToRender={8}
+              removeClippedSubviews={true}
+              maxToRenderPerBatch={10}
+              windowSize={8}
+              getItemLayout={renderItemLayout}
+              keyExtractor={renderItemKey}
+              renderItem={renderItem}
+            />
+          </>
+          :
           <View>
             <Text style={styles.noGymsText}>Could not find any nearby gyms. </Text>
           </View>

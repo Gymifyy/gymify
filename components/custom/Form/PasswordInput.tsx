@@ -1,6 +1,6 @@
 import { StyleSheet, TextInput, View } from 'react-native';
 import { useState } from 'react';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { Colors } from '@/constants';
 import { Button } from '@/components/skeleton';
 import { ForgotPassword } from './ForgotPassword';

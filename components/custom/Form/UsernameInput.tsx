@@ -1,5 +1,5 @@
 import { StyleSheet, TextInput, View } from 'react-native';
-import { MaterialIcons, Octicons } from '@expo/vector-icons';
+import { Octicons } from '@expo/vector-icons';
 import { Colors } from '@/constants';
 import { Button } from '@/components/skeleton';
 import { Dispatch, SetStateAction } from 'react';

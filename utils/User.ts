@@ -15,7 +15,7 @@ type LoginWithEmailReturnType = {
 /**
  * User Class to handle Supabase User.
 * */
-export class User {
+export class UserController {
   readonly supabase = supabase;
   readonly query = this.supabase.from("users");
 
@@ -23,9 +23,22 @@ export class User {
     if (username.trim() === "" || !username) {
       return { error: { code: "400", hint: "username", details: "Please provide a valid username like `alvi_d`, `shunger` ..etc", message: "Please provide a valid username. " }, user: null }
     }
-    const { data, error, count, status, statusText } = await this.query.select("*").eq("username", username);
-    console.log({ data, error, count, status, statusText });
-    return { error: error, user: null }
+    const { data, error } = await this.query.select("*").eq("username", username).limit(1).single();
+    return { error: error, user: data }
+  }
+
+  /**
+   * Perform the neccessary updates after joining the gym
+  * */
+  async updateAferJoinGym(userId: string) {
+    const { data, error } = await this.getUserById(userId);
+    if (error) return { data: null, error };
+    else if (data && data.enrolledGymsCount) {
+      const updatedGymCount = data.enrolledGymsCount++;
+      const { error } = await this.query.update({ enrolledGymsCount: updatedGymCount }).eq("id", data.id).order("username");
+      return { error };
+    }
+    else return { data: null, error: null };
   }
 
   async getUserWithEmail(email: string = ""): Promise<GetUserWithUsernameType> {
@@ -40,12 +53,26 @@ export class User {
         user: null
       }
     }
-    const { data, error, count, status, statusText } = await this.query.select("*").eq("email", email);
-    console.log({ data, error, count, status, statusText });
-    return { error: error, user: null }
+    const { data, error } = await this.query.select("*").eq("email", email);
+    return { error: error, user: data ? data[0] : null }
   }
   async signOut() {
     return await supabase.auth.signOut();
+  }
+
+
+  // Multiple
+  async getUsersById(userId: string[]) {
+    if (!userId || userId.length === 0) return { data: null, error: null };
+    const { data, error } = await this.query.select("id, username, email, profileImage").in("id", userId)
+    return { data, error }
+  }
+
+  // Single
+  async getUserById(userId: string) {
+    if (!userId || userId.length === 0) return { data: null, error: null };
+    const { data, error } = await this.query.select("*").eq("id", userId).limit(1).single();
+    return { data, error }
   }
 
   async insert(data: Tables<"users">): Promise<{ error: PostgrestError | null }> {

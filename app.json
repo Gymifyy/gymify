@@ -43,7 +43,9 @@
     },
     "plugins": [
       "expo-router",
-      "expo-calendar"
+      "expo-calendar",
+      "expo-font",
+      "react-native-email-link"
     ],
     "experiments": {
       "typedRoutes": true

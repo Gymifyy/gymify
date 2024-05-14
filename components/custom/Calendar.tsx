@@ -7,7 +7,7 @@ import { Dayjs } from 'dayjs';
 
 type Props = {
   selectedDate: DateType,
-  setSelectedDate: Dispatch<SetStateAction<string | number | Dayjs | Date>>,
+  setSelectedDate: Dispatch<SetStateAction<DateType>>,
 }
 
 /**
@@ -53,12 +53,12 @@ export function Calendar({ selectedDate, setSelectedDate }: Props): React.JSX.El
 const styles = StyleSheet.create({
   calendar_view: {
     width: '100%',
-    backgroundColor: Colors.slate["200"],
+    backgroundColor: Colors.slate["100"],
     padding: 15,
     borderRadius: 15,
-    shadowRadius: 20,
+    shadowRadius: 30,
     shadowColor: Colors.soft.black,
     shadowOpacity: 0.15,
-    shadowOffset: { width: 0, height: 10 },
+    shadowOffset: { width: 0, height: -5 },
   },
 });

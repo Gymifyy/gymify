@@ -1,38 +1,51 @@
-import { useCallback } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Text, StyleSheet, View } from "react-native";
 import { Colors } from "@/constants";
 import { User } from "@supabase/supabase-js";
-import { Tables } from "@/types/database.types";
+import { AuthStoreContext } from "./context";
+import { useIsFocused } from "@react-navigation/native";
 
 /**
  * Responsible for header display.
- * This componenta manages its own state. no need for props.
+ * This component that manages its own state. no need for props.
  * */
 
-export function Header({ user }: { user: User & Omit<Tables<"users">, "email" | "id" | "createdAt"> | null }) {
+export function Header() {
+  const [user, setUser] = useState<User | null>(null);
+  const AuthContextStore = useContext(AuthStoreContext);
+  const isFocused = useIsFocused();
 
-  const renderHeader = useCallback(() => {
-    if (!user) {
-      return (
-        <>
-        </>
-      );
+  // Auth Handler
+  useEffect(() => {
+    async function getUser() {
+      if (AuthContextStore.session) {
+        // save re-renders 
+        setUser({ ...AuthContextStore.session.user });
+      }
+      else setUser(null);
     }
-    else {
-      return (
-        <View style={styles.header_group}>
+    if (isFocused) {
+      getUser();
+    }
+  }, [isFocused, AuthContextStore])
+
+  return <>
+    {
+      user ? (
+        <View style={styles.header_group} >
           <Text style={styles.header_text}>
             Hello{' '}
             <Text>
-              {user.username}
+              {user?.user_metadata.username}
             </Text>
           </Text>
-          <Text style={styles.header_description}>Take a look at our curated list of gyms.</Text>
+          <Text style={styles.header_description}>
+            {user?.user_metadata.isSuperAdmin ? "You are currently logged in as Super Admin." : "Take a look at our curated list of gyms."}
+          </Text>
         </View>
-      );
+      ) : null
     }
-  }, [user])
-  return renderHeader();
+  </>
 }
 
 

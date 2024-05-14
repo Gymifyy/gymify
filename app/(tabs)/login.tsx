@@ -2,38 +2,19 @@ import { Keyboard, StyleSheet, TouchableWithoutFeedback, } from "react-native";
 import Constants from "expo-constants";
 import { AnimatePresence, MotiView } from "moti";
 import { Text, View } from "react-native";
-import { useContext, useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/skeleton";
 import { Colors } from "@/constants";
 import { LoginTab } from "@/components/custom/Login/Login";
 import { SignUpTab } from "@/components/custom/Signup/Signup";
 import { ImageBackground } from "expo-image";
-import { AuthContextType, AuthStoreContext } from "@/components/custom/context";
-import { router } from "expo-router";
-import { useIsFocused } from "@react-navigation/native";
-
 
 export default function LoginModalScreen() {
   const [renderSignUp, setRenderSignUp] = useState<boolean>(false);
 
-  const isFocused = useIsFocused();
-  const AuthContextStore = useContext<AuthContextType>(AuthStoreContext);
-
-  useEffect(() => {
-    async function getUser() {
-      if (AuthContextStore.session) {
-        return router.push("/profile");
-      }
-    }
-    if (isFocused) {
-      getUser();
-    }
-  }, [isFocused]);
-
   return (
-    <ImageBackground blurRadius={17} source={require("@/assets/images/gym-background.jpg")} alt="Gym Background" style={styles.imageBackground}>
+    <ImageBackground source={require("@/assets/images/gym-background.jpg")} alt="Gym Background" style={styles.imageBackground}>
       <TouchableWithoutFeedback style={{ width: '100%', height: '100%', }} onPress={Keyboard.dismiss} accessible={false}>
-
         <View style={styles.container}>
           <Text style={styles.gymify_header}>Gymify</Text>
           <View style={styles.tabs}>
@@ -52,13 +33,11 @@ export default function LoginModalScreen() {
               </Button>
             </MotiView>
           </View>
-
           <AnimatePresence exitBeforeEnter>
             {!renderSignUp && <LoginTab key={"LOGIN_TAB"} />}
             {renderSignUp && <SignUpTab key={"SIGNUP_TAB"} />}
           </AnimatePresence>
-        </View >
-
+        </View>
       </TouchableWithoutFeedback>
     </ImageBackground>
   );
@@ -68,12 +47,12 @@ const styles = StyleSheet.create({
   container: {
     width: "100%",
     height: "100%",
-    backgroundColor: Colors.transparent,
+    backgroundColor: Colors.gray.darkLoginTransparent,
     flex: 1,
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "flex-start",
-    rowGap: 15,
+    rowGap: 8,
     paddingTop: Constants.statusBarHeight,
   },
   imageBackground: {
@@ -86,6 +65,9 @@ const styles = StyleSheet.create({
     fontSize: 40,
     fontWeight: "bold",
     letterSpacing: 1,
+    textShadowColor: Colors.gray[700],
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
     color: Colors.theme_orange,
   },
   tabs: {

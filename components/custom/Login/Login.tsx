@@ -6,10 +6,10 @@ import { useState } from "react";
 import { AuthenticatorButton, EmailInput, PasswordInput, } from "@/components/custom";
 import { Loading } from "@/components/skeleton";
 import { Colors } from "@/constants";
-import { User } from "@/utils/User";
+import { UserController } from "@/utils/User";
 
 // User Controller
-const userController = new User();
+const userController = new UserController();
 
 export function LoginTab() {
 
@@ -32,7 +32,7 @@ export function LoginTab() {
       setError("");
       setLoading(false);
       // give app time to look at context
-      router.push("/");
+      router.replace("/");
     }
   }
 
@@ -50,10 +50,7 @@ export function LoginTab() {
         opacity: 0,
         left: 100,
       }}
-      transition={{
-        type: 'timing',
-        duration: 400,
-      }}
+      transition={{ type: "timing", duration: 250 }}
     >
       <View style={styles.input_group}>
         <EmailInput variant={"dark"} email={email} setEmail={setEmail} />
@@ -89,6 +86,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "flex-start",
     rowGap: 15,
+    zIndex: 999,
   },
   error_text: {
     fontSize: 17,

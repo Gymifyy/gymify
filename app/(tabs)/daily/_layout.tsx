@@ -5,11 +5,12 @@ import { Calendar } from '@/components/custom';
 import { useCallback, useEffect, useState } from 'react';
 import { scheduleNotification } from "@/utils/Notifications";
 import relativeTime from "dayjs/plugin/relativeTime";
-import dayjs, { Dayjs } from 'dayjs';
+import dayjs from 'dayjs';
 import Constants from 'expo-constants';
 import { Button } from '@/components/skeleton';
 import { Octicons } from '@expo/vector-icons';
 import { NotificationRequestInput } from 'expo-notifications';
+import { DateType } from 'react-native-ui-datepicker';
 
 dayjs.extend(relativeTime)
 
@@ -17,7 +18,7 @@ export default function CalendarScreen() {
   // calculate todays date
   const today = dayjs().subtract(dayjs().hour(), 'hours');
   const [sound, setSound] = useState<Audio.Sound>(new Audio.Sound());
-  const [selectedDate, setSelectedDate] = useState<string | number | Dayjs | Date>(new Date());
+  const [selectedDate, setSelectedDate] = useState<DateType>(new Date());
 
   useEffect(() => {
     Audio.Sound.createAsync(require("@/assets/audio/about-a-week-ago.mp3")).then(async ({ sound }) => {
@@ -30,6 +31,7 @@ export default function CalendarScreen() {
     if (sound._loaded) {
       sound.stopAsync();
     }
+    if (!selectedDate) return;
     const sDate = dayjs(selectedDate.toString());
     // 0 -> Today
     // -7 -> 7 Days ago
