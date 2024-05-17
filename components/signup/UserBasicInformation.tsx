@@ -1,33 +1,26 @@
 import {
-  View,
-  Keyboard,
-  StyleSheet,
-  TouchableWithoutFeedback,
+  View, StyleSheet,
 } from "react-native";
 import { Colors } from "@/constants";
-import { UsernameInput, EmailInput, PasswordInput } from "@/components/custom";
+import { UsernameInput, EmailInput } from "@/components/custom";
 import { View as MotionView, Text as MotionText } from "moti";
 
 type Props = {
   email: string;
   username: string;
-  password: string;
   error: string;
 
   setEmail: (newEmail: string) => void;
   setUsername: (newUsername: string) => void;
-  setPassword: (newPassword: string) => void;
   setError: (newError: string) => void;
 };
 
 export function UserBasicInformation({
   email,
   username,
-  password,
   error,
   setEmail,
   setUsername,
-  setPassword,
 }: Props) {
   return (
     <MotionView
@@ -50,9 +43,8 @@ export function UserBasicInformation({
     >
       <View style={styles.container}>
         <View style={styles.input_group}>
-          <UsernameInput username={username} setUsername={setUsername} />
-          <EmailInput email={email} setEmail={setEmail} />
-          <PasswordInput password={password} setPassword={setPassword} />
+          <UsernameInput variant="light" username={username} setUsername={setUsername} />
+          <EmailInput variant="light" email={email} setEmail={setEmail} />
           <MotionText
             from={{
               opacity: 0,

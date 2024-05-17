@@ -1,19 +1,15 @@
-import { Colors, CourseType, GymType } from "@/constants";
+import { Colors } from "@/constants";
 import { View as MotionView, Text as MotionText } from "moti";
 import { Keyboard, StyleSheet, TouchableWithoutFeedback, View, Text } from "react-native";
 import { Button } from "../skeleton";
 import { MaterialIcons } from "@expo/vector-icons";
-import { Dispatch, SetStateAction } from "react";
 
 type Props = {
-  firstName: string,
-  lastName: string,
-  weight: number,
-  height: number,
-  enrolledCourses: Array<CourseType>,
-  enrolledGyms: Array<GymType>
-  step: number,
-  units: "imperial" | "metric",
+  firstName: string | null,
+  lastName: string | null,
+  weight: number | null,
+  height: number | null,
+  step: number | null,
   error: string,
   maxSteps: number[],
 
@@ -21,14 +17,13 @@ type Props = {
   setLastName: (newLastName: string) => void,
   setWeight: (newWeight: number) => void,
   setHeight: (newHeight: number) => void,
-  setUnits: Dispatch<SetStateAction<"imperial" | "metric">>
   setError: (newError: string) => void,
   setStep: (step: number) => void,
   proceedToNextStep: () => void;
 }
 
 
-export function UserInformation({ firstName, lastName, maxSteps, weight, height, step, setStep, units, error, enrolledGyms, enrolledCourses, setUnits, proceedToNextStep, setError, setHeight, setWeight, setLastName, setFirstName }: Props) {
+export function UserInformation({ firstName, lastName, maxSteps, weight, height, step, setStep, units, error, setUnits, proceedToNextStep, setError, setHeight, setWeight, setLastName, setFirstName }: Props) {
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false} style={{ width: '100%', height: '100%' }}>
       <MotionView

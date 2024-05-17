@@ -68,6 +68,13 @@ export class UserController {
     return { data, error }
   }
 
+  // Multiple
+  async getUserToCompleteSetup(userId: string) {
+    if (!userId || userId.length === 0) return { data: null, error: null };
+    const { data, error } = await this.query.select("*").eq("id", userId)
+    return { data, error }
+  }
+
   // Single
   async getUserById(userId: string) {
     if (!userId || userId.length === 0) return { data: null, error: null };
