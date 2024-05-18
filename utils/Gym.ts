@@ -1,5 +1,6 @@
 import { Tables } from "@/types/database.types";
 import { supabase } from "./supabase";
+import { PostgrestError } from "@supabase/supabase-js";
 
 /**
  * Gyms Class to handle Supabase Gyms table actions.
@@ -25,21 +26,20 @@ export class GymController {
   /**
    * Perform the neccessary updates after joining a gym
   * */
-  async updateAferJoinGym(gymId: string, userId: string) {
+  async updateAfterJoinGym(gymId: string, userId: string) {
+    // get gym to join.
     const { data, error } = await this.getWithId(gymId);
     if (error) return { data, error }
-    else if (data) {
+    if (data) {
       if (data.members.includes(userId)) {
-        return { error: null, data: null };
+        // user is already part of gym
+        return { error: { code: "404", hint: "user-gym-already", details: "This user is already part of this gym. Please try again later. ", message: "This user is already part of this gym" } as PostgrestError, data: null };
       }
-      console.log({ data });
       const updatedMembers = [...data.members, userId]
-      console.log({ updatedMembers });
-      const { error } = await this.query.update({ members: updatedMembers, membersCount: updatedMembers.length, }).eq("id", userId).limit(1).order("name");
-      console.log({ ERROR: error });
-      return { error };
+      const { data: gyms, error } = await this.query.update({ members: updatedMembers, membersCount: updatedMembers.length, }).eq("id", gymId).order("name").select().limit(1).single();
+      return { data: gyms, error };
     }
-    else return { error: null, data: null }
+    else return { data: undefined, error: undefined };
   }
 
 

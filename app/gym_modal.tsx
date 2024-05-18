@@ -14,18 +14,23 @@ import { User } from '@supabase/supabase-js';
 import { UserController } from '@/utils/User';
 import { RenderUsersTab } from '@/components/gym_modal/RenderUsersTab';
 import { GymController } from '@/utils/Gym';
+
+const userController: UserController = new UserController();
+const gymController: GymController = new GymController();
 const usersController: UserController = new UserController();
 export default function GymModal() {
   const authStoreContext = useContext(AuthStoreContext);
   const [user, setUser] = useState<User | null>(null);
   const [gym, setGym] = useState<Tables<"gyms">>();
-  const [activeTab, setActiveTab] = useState<"overview" | "prices" | "location" | "users" | "contact">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "prices" | "location" | "users">("overview");
   const [images, setImages] = useState<string[]>([]);
   const [gymLocation, setGymLocation] = useState<LocationGeocodedAddress | null>(null);
   const [gymUsers, setGymUsers] = useState<{ id: string; username: string; email: string; profileImage: string | null; }[] | null>([]);
   const [region, setRegion] = useState<{ latitude: number, longitude: number }>({ latitude: 0, longitude: 0 });
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isJoiningGym, setIsJoiningGym] = useState<boolean>(false);
+  const [isMember, setIsMember] = useState<boolean>(false);
+  const [error, setError] = useState<string>("");
   const params = useLocalSearchParams<{ gym?: string }>()
   const isFocused: boolean = useIsFocused();
 
@@ -56,6 +61,7 @@ export default function GymModal() {
         const { data, error } = await usersController.getUsersById(_temp.members);
         if (error) {
           console.log({ error });
+          setError("Something unexpected happened.");
         }
         if (data) {
           setGymUsers(data);
@@ -68,22 +74,59 @@ export default function GymModal() {
     if (isFocused) getGymProps();
   }, [params.gym, isFocused]);
 
+  useEffect(() => {
+    async function checkJoinedStatus() {
+      if (!user) return;
+      const { user: _user, error: userError } = await userController.getUserWithEmail(user.email);
+      if (!_user) {
+        console.log({ userError });
+        setError("Could not verify session. Please try to log in again.");
+        return;
+      }
+      if (gym?.members.includes(_user.id)) {
+        // user is already a member. No point in further requests.
+        setIsMember(true);
+      }
+      else setIsMember(false);
+    }
+    if (isFocused) checkJoinedStatus();
+  }, [user, isFocused]);
+
   async function joinGym() {
     setIsJoiningGym(true);
-    const userController: UserController = new UserController();
-    const gymController: GymController = new GymController();
     // Update MemberCount and members array in gyms
-    const _user = await userController.getUserWithEmail(user?.email);
-    const { error } = await userController.updateAferJoinGym(_user.user?.id as string)
-    if (error) {
+    if (!user) {
+      setIsJoiningGym(false);
+      setError("Could not verify session. Please try to log in again.");
+      return;
+    };
+    const { user: _user, error: userErrorJoin } = await userController.getUserWithEmail(user.email);
+    if (!_user) {
+      console.log({ userErrorJoin });
+      setError("Could not verify session. Please try to log in again.");
+      setIsJoiningGym(false);
+      return;
+    }
+    const { data, error } = await userController.updateAfterJoinGym(_user.id)
+    if (!data) {
+      setError(`Could not join ${gym?.name}. Please try again later.`);
       console.log({ error });
+      setIsJoiningGym(false);
       return;
     }
     // Update user's enrolledGymsCount field
-    gymController.updateAferJoinGym(gym?.id as string, _user.user?.id as string);
+    const { data: _gyms, error: err } = await gymController.updateAfterJoinGym(gym?.id as string, data.id);
+    if (err) {
+      setIsJoiningGym(false);
+      return;
+    }
+    if (_gyms) {
+      setGym(_gyms);
+    }
     setTimeout(() => {
       setIsJoiningGym(false);
     }, 1500);
+
   }
 
   return (
@@ -119,19 +162,23 @@ export default function GymModal() {
                 <Button onPress={() => setActiveTab("prices")} style={{ ...styles.button, backgroundColor: activeTab === "prices" ? Colors.theme_orange : Colors.gray[300], borderColor: activeTab === "prices" ? Colors.orange[400] : Colors.gray[400] }} >
                   <Text style={{ fontSize: 16, paddingHorizontal: 3, paddingVertical: 2, color: activeTab === "prices" ? Colors.white : Colors.slate[600] }}>Prices</Text>
                 </Button>
-                <Button onPress={() => setActiveTab("contact")} style={{ ...styles.button, backgroundColor: activeTab === "contact" ? Colors.theme_orange : Colors.gray[300], borderColor: activeTab === "contact" ? Colors.orange[400] : Colors.gray[400] }} >
-                  <Text style={{ fontSize: 16, paddingHorizontal: 3, paddingVertical: 2, color: activeTab === "contact" ? Colors.white : Colors.slate[600] }}>Contact</Text>
-                </Button>
               </View>
             </ScrollView>
           </View>
           <View style={styles.addInfo}>
             <AnimatePresence exitBeforeEnter>
-              {activeTab === "overview" ? <RenderOverviewTab isSuperAdmin={user?.user_metadata.isSuperAdmin} isLoading={isJoiningGym} gym={gym} joinGym={joinGym} /> : null}
+              {activeTab === "overview" ? <>
+                <RenderOverviewTab isMember={isMember} isSuperAdmin={user?.user_metadata.isSuperAdmin} isLoading={isJoiningGym} gym={gym} joinGym={joinGym} />
+                {error ?
+                  <Text style={{ fontSize: 19, fontWeight: "500", color: Colors.red[600] }}>
+                    {error}
+                  </Text> : null}
+                <RenderContactTab gym={gym} />
+              </>
+                : null}
               {activeTab === "users" ? <RenderUsersTab gym={gym} users={gymUsers} /> : null}
               {activeTab === "location" ? <RenderLocationTab gymName={gym?.name} gymDescription={gym?.description} location={gymLocation} region={region} /> : null}
               {activeTab === "prices" ? <RenderPricesTab gymId={gym?.id} /> : null}
-              {activeTab === "contact" ? <RenderContactTab gym={gym} /> : null}
             </AnimatePresence>
           </View>
         </View>

@@ -6,7 +6,7 @@ import { Image, StyleSheet, Text, View } from "react-native";
 import { Button } from "../skeleton";
 import { Octicons } from "@expo/vector-icons";
 
-export function RenderOverviewTab({ gym, joinGym, isLoading, isSuperAdmin }: { gym: Tables<"gyms"> | undefined, joinGym: () => void, isLoading: boolean, isSuperAdmin: boolean }) {
+export function RenderOverviewTab({ gym, joinGym, isLoading, isSuperAdmin, isMember }: { gym: Tables<"gyms"> | undefined, joinGym: () => void, isLoading: boolean, isMember: boolean, isSuperAdmin: boolean }) {
   return (
     <MotiView
       style={styles.overviewTab}
@@ -31,12 +31,18 @@ export function RenderOverviewTab({ gym, joinGym, isLoading, isSuperAdmin }: { g
       {isLoading ? <View style={{ height: 100, width: "100%", alignSelf: "center", justifyContent: "center", alignItems: "center", alignContent: "center", }}>
         <Image style={{ height: 100 }} source={require("@/assets/loading_animation.gif")} alt={"Loading Animation"} />
       </View> : null}
-      {isSuperAdmin ? null : (
+      {isSuperAdmin || isMember ? null : (
         <Button onPress={joinGym} style={styles.joinButton}>
           <Octicons size={19} color={Colors.slate[100]} name={"plus"} />
           <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Join</Text>
         </Button>
       )}
+      {isMember ?
+        <Button onPress={() => {}} style={styles.joinButton}>
+          <Octicons size={19} color={Colors.slate[100]} name={"check"} />
+          <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Joined</Text>
+        </Button>
+        : null}
       <Text style={{ ...styles.description, alignSelf: 'flex-end', }}>
         {dayjs(gym?.createdAt).format("DD MMMM YYYY").toString()}
       </Text>
@@ -68,6 +74,7 @@ const styles = StyleSheet.create({
     height: "auto",
     paddingVertical: 7,
     paddingHorizontal: 12,
+    marginTop: 14,
     backgroundColor: Colors.green[600],
     flexDirection: "row",
     justifyContent: "space-evenly",

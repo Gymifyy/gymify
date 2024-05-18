@@ -30,13 +30,22 @@ export class UserController {
   /**
    * Perform the neccessary updates after joining the gym
   * */
-  async updateAferJoinGym(userId: string) {
+  async updateAfterJoinGym(userId: string) {
     const { data, error } = await this.getUserById(userId);
     if (error) return { data: null, error };
     else if (data && data.enrolledGymsCount) {
+      // update user enrolledGymCount
       const updatedGymCount = data.enrolledGymsCount++;
-      const { error } = await this.query.update({ enrolledGymsCount: updatedGymCount }).eq("id", data.id).order("username");
-      return { error };
+      const { data: updateUser, error } = await this.query.update({ enrolledGymsCount: updatedGymCount }).eq("id", data.id).order("username").select("*").limit(1).single();
+      const { data: authData, error: authError } = await this.supabase.auth.updateUser({
+        data: data,
+      });
+      console.log({ authData });
+      if (error) {
+        console.log({ error });
+        return { data: null, authError };
+      }
+      return { data: updateUser, error };
     }
     else return { data: null, error: null };
   }

@@ -53,6 +53,8 @@ export default function CompleteSetup() {
     setStep((previous) => previous + 1);
   };
 
+
+  // TODO
   return (
     <View>
       <View>

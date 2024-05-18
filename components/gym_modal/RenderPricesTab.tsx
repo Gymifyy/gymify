@@ -2,7 +2,7 @@ import { Colors } from "@/constants";
 import { Tables } from "@/types/database.types";
 import { GymPlansController } from "@/utils/GymPlans";
 import { useIsFocused } from "@react-navigation/native";
-import { MotiView } from "moti";
+import { MotiView, ScrollView } from "moti";
 import { useCallback, useEffect, useState } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { Loader } from "../skeleton";
@@ -18,18 +18,18 @@ export function RenderPricesTab({ gymId }: { gymId: string | undefined }) {
   // Render Plans based on type
   const renderPlans = useCallback((type: Tables<"gym_plans">["type"]) => {
     return (
-      (
-        <View style={{ width: "100%", height: 'auto', padding: 5, gap: 7, }}>
-          {plans.filter((plan) => plan.type === type).length >= 1 ?
+      <>
+        {plans.filter((plan) => plan.type === type).length >= 1 ?
+          <View style={{ width: "100%", height: 'auto', padding: 5, gap: 7, }}>
             <Text style={styles.planType}>{type.toString()}</Text>
-            : null}
-          {plans.filter((plan) => plan.type === type).length >= 1 ? plans.map((plan) => (
-            plan.type === type ?
-              <Plan plan={plan} key={plan.id} />
-              : null
-          )) : null}
-        </View>
-      )
+            {plans.filter((plan) => plan.type === type).length >= 1 ? plans.map((plan) => (
+              plan.type === type ?
+                <Plan plan={plan} key={plan.id} />
+                : null
+            )) : null}
+          </View>
+          : null}
+      </>
     );
   }, [plans])
 
@@ -81,9 +81,11 @@ export function RenderPricesTab({ gymId }: { gymId: string | undefined }) {
       from={{ opacity: 0, left: -50 }}
       animate={{ opacity: 1, left: 0 }}
     >
-      {renderPlans("TRIAL")}
-      {renderPlans("MONTHLY")}
-      {renderPlans("YEARLY")}
+      <ScrollView scrollEnabled={plans.length > 4} style={{ padding: 0, margin: 0, width: "100%", height: "100%", }}>
+        {renderPlans("TRIAL")}
+        {renderPlans("MONTHLY")}
+        {renderPlans("YEARLY")}
+      </ScrollView>
     </MotiView>
   )
 }
@@ -96,8 +98,8 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    alignContent: "center",
-    justifyContent: "center",
+    alignContent: "flex-start",
+    justifyContent: "flex-start",
     rowGap: 12,
   },
   planContainer: {
