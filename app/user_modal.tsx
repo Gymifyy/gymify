@@ -1,18 +1,16 @@
 import { AuthStoreContext } from "@/components/custom/context";
-import { Button, Loader } from "@/components/skeleton";
+import { Loader } from "@/components/skeleton";
 import { Colors } from "@/constants";
 import { Tables } from "@/types/database.types";
 import { UserController } from "@/utils/User";
-import { Octicons } from "@expo/vector-icons";
 import { useIsFocused } from "@react-navigation/native";
-import TinyIcon from 'react-native-ico-mingcute-tiny-bold-filled';
 import dayjs from "dayjs";
 import { router, useLocalSearchParams } from "expo-router";
 import { MotiView } from "moti";
 import { useContext, useEffect, useState } from "react";
-import { Image, Linking, Text } from "react-native";
+import { Image, Text } from "react-native";
 import { StyleSheet, View } from "react-native";
-import { ProfileHeader } from "@/components/profile";
+import { UserTabs } from "@/components/user_modal/UserTabs";
 
 type ParamUserType = { id: string, username: string, email: string, profileImage: string | null };
 
@@ -21,9 +19,34 @@ export default function UserModal() {
   const authStoreContext = useContext(AuthStoreContext);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<Tables<"users"> | null>(null);
+  const [activeTab, setActiveTab] = useState<"overview" | "contact" | "actions" | "gyms">("overview");
   const params = useLocalSearchParams<{ user?: string }>()
   const isFocused: boolean = useIsFocused();
 
+
+  function Header() {
+    return (
+      <View style={styles.headerContainer}>
+        {user?.profileImage ?
+          <View style={styles.profileImageContainer}>
+            <Image alt={`${user.username} profile photo`} source={{ uri: user.profileImage }} style={styles.profileImage} />
+          </View>
+          : null}
+        <View style={styles.usernameContainer}>
+          <Text style={styles.username}>{user?.username}</Text>
+          <View style={styles.lastAndFirstName}>
+            <Text style={styles.fName}>{user?.firstName} </Text>
+            <Text style={styles.fName}>{user?.lastName}</Text>
+          </View>
+          <View>
+            <Text>Date Created: {' '}
+              <Text style={styles.dateCreated}>{dayjs(user?.createdAt).format("dddd, DD MMMM YYYY")}</Text>
+            </Text>
+          </View>
+        </View>
+      </View>
+    );
+  }
 
   useEffect(() => {
     async function fetchUser() {
@@ -45,11 +68,6 @@ export default function UserModal() {
     }
   }, [params.user]);
 
-  function openWhatsApp() {
-    Linking.openURL(`whatsapp://send?phone=${user?.phoneNumber}`);
-  }
-
-  // TODO: IS LOADING STATE !!!
   if (isLoading) {
     return (
       <MotiView
@@ -80,48 +98,8 @@ export default function UserModal() {
       from={{ opacity: 0, left: -50 }}
       animate={{ opacity: 1, left: 0 }}
     >
-      {/* Detailed View on Important Info */}
-      <View style={styles.headerContainer}>
-        {user?.profileImage ?
-          <View style={styles.profileImageContainer}>
-            <Image alt={`${user.username} profile photo`} source={{ uri: user.profileImage }} style={styles.profileImage} />
-          </View>
-          : null}
-        <View style={styles.usernameContainer}>
-          <Text style={styles.username}>{user?.username}</Text>
-          <View style={styles.lastAndFirstName}>
-            <Text style={styles.fName}>{user?.firstName} </Text>
-            <Text style={styles.fName}>{user?.lastName}</Text>
-          </View>
-          <View>
-            <Text>Date Created: {' '}
-              <Text style={styles.dateCreated}>{dayjs(user?.createdAt).format("dddd, DD MMMM YYYY")}</Text>
-            </Text>
-          </View>
-        </View>
-      </View>
-      <View style={styles.actions}>
-        <Button style={{ ...styles.button, ...styles.removeButton }}>
-          <Octicons size={20} name={"x-circle"} color={Colors.red[600]} />
-          <Text style={{ ...styles.buttonText, ...styles.removeButtonText }}>Remove</Text>
-        </Button>
-        <Button onPress={openWhatsApp} style={styles.button}>
-          <TinyIcon name="phone" />
-          <Text style={styles.buttonText}>Contact</Text>
-        </Button>
-      </View>
-      <Text style={styles.helperText}>* Removes this user from this gym only.</Text>
-      <View style={styles.additionalInfo}>
-        <Text style={styles.additionalInfoText}>Additional Info</Text>
-        <ProfileHeader user={user} styling={"small"} />
-        <Text style={{ fontSize: 19, letterSpacing: 0.8, paddingVertical: 10, }}>
-          Registered in
-          {' '}
-          <Text style={{ fontSize: 19, }}>{user?.enrolledGymsCount}</Text>
-          {' '}
-          gyms
-        </Text>
-      </View>
+      <Header />
+        <UserTabs user={user} setChosenTab={setActiveTab} chosenTab={activeTab} />
     </MotiView>
   )
 }
@@ -183,64 +161,4 @@ const styles = StyleSheet.create({
     color: Colors.orange[600],
     fontWeight: "600",
   },
-  actions: {
-    width: "100%",
-    height: "auto",
-    paddingTop: 20,
-    paddingBottom: 12,
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center",
-    alignContent: "center",
-    justifyContent: "space-evenly",
-    padding: 5,
-  },
-  button: {
-    width: "auto",
-    height: "auto",
-    paddingVertical: 7,
-    paddingHorizontal: 10,
-    alignContent: "center",
-    alignItems: "center",
-    flexDirection: "row",
-    justifyContent: "center",
-    gap: 7,
-    borderColor: Colors.slate[800],
-    borderWidth: 2,
-    borderRadius: 5,
-  },
-  removeButton: {
-    borderColor: Colors.red[600],
-  },
-  buttonText: {
-    fontSize: 16,
-    letterSpacing: 0.8,
-  },
-  removeButtonText: {
-    color: Colors.red[600],
-  },
-  helperText: {
-    lineHeight: 22,
-    letterSpacing: 0.7,
-    fontWeight: "500",
-    fontSize: 12,
-    color: Colors.slate[700],
-  },
-  additionalInfo: {
-    width: "100%",
-    height: "auto",
-    padding: 5,
-    marginTop: 15,
-    gap: 10,
-    flexDirection: "column",
-    alignContent: "center",
-    justifyContent: "center",
-    alignItems: "flex-start",
-  },
-  additionalInfoText: {
-    fontSize: 20,
-    letterSpacing: 0.8,
-    fontWeight: "500",
-  },
-
 });

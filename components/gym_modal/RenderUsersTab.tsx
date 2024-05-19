@@ -35,6 +35,9 @@ export function RenderUsersTab({ gym, users }: { gym: Tables<"gyms"> | undefined
               {gym?.coaches.includes(item.id) ?
                 <Text style={styles.coachesLabel}>Coach</Text>
                 : null}
+              {gym?.frontDesks.includes(item.id) ?
+                <Text style={styles.frontDeskLabel}>Front Desk</Text>
+                : null}
             </View>
             <Text style={styles.email}>{item.email}</Text>
           </View>
@@ -58,6 +61,8 @@ export function RenderUsersTab({ gym, users }: { gym: Tables<"gyms"> | undefined
       animate={{ opacity: 1, left: 0 }}
     >
       {users && users.length >= 1 ? <Text style={styles.info}>{users.length} registered users</Text> : <Text style={styles.info}>No users are registered in this gym yet.</Text>}
+      {/* TODO: Search functionality */}
+      <Text>Search here ...</Text>
       {users && users.length >= 1 ?
         <FlatList
           data={users}
@@ -117,6 +122,11 @@ const styles = StyleSheet.create({
   coachesLabel: {
     fontWeight: "500",
     color: Colors.blue[600],
+    fontSize: 17,
+  },
+  frontDeskLabel: {
+    fontWeight: "500",
+    color: Colors.purple[600],
     fontSize: 17,
   },
   imageContainer: {

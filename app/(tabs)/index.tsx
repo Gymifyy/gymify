@@ -34,12 +34,17 @@ export default function HomeScreen() {
       if (AuthContextStore.session) {
         // save re-renders 
         if (AuthContextStore.session.user.email === saveRendersTemp?.email) return;
-        const { data: users, error } = await supabase.from("users").select("username, firstName, completed_setup, isSuperAdmin, lastName, weight, height, phoneNumber, bmi, profileImage, enrolledCoursesCount, enrolledGymsCount, age, gender").eq("email", AuthContextStore.session.user.email as string);
-        if (users && users.length >= 1) {
-          const _user: Omit<Tables<"users">, "email" | "id" | "createdAt"> = users[0];
+        const { data: _user, error } = await supabase.from("users").select("*").eq("email", AuthContextStore.session.user.email as string).limit(1).single();
+        if (_user) {
           if (_user.isSuperAdmin && !_user.completed_setup) {
             // if setup not completed and is super admin
-            router.push("/complete_setup_modal");
+            router.push({
+              pathname: "/edit_profile",
+              params: {
+                user: JSON.stringify(_user),
+              },
+            }
+            );
           }
           setUser({ ...AuthContextStore.session.user, ..._user });
         }

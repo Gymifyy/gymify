@@ -5,7 +5,11 @@ import { ProfileAchievement } from "./ProfileAchievement";
 export function ProfileAchievements({ achievements }: { achievements: Tables<"achievements">[] }) {
   return (
     <View style={styles.container}>
-      {achievements.map((achievement) => <ProfileAchievement key={achievement.id} achievement={achievement} />)}
+      {
+        achievements.length >= 1 ?
+          achievements.map((achievement) => <ProfileAchievement key={achievement.id} achievement={achievement} />) :
+          <Text>No Achievements earned yet. </Text>
+      }
     </View>
   )
 }

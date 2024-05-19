@@ -17,61 +17,66 @@ import { supabase } from "@/utils/supabase";
 /**
  *  User Profile screen
  * */
+const userController = new UserController();
+const achievementController = new AchievementController();
 export default function ProfileScreen() {
-  const userController = new UserController();
-  const achievementController = new AchievementController();
-  const [achievements, setAchievements] = useState<Tables<"achievements">[]>(achievementController.achievements);
+  const [achievements, setAchievements] = useState<Tables<"achievements">[]>([]);
   const [user, setUser] = useState<Tables<"users"> | null>(null);
   const [message, setMessage] = useState<string>("");
-  const authContext = useContext(AuthStoreContext);
   const isFocused = useIsFocused();
 
   useEffect(() => {
     if (isFocused) {
-      const fetchAchievements = async () => {
-        if (!authContext.session) {
-          router.replace("/");
+      async function fetchAchievements() {
+        const { data, error } = await supabase.auth.getUser();
+        if (!data || !data.user) {
+          const { error: signOutError } = await supabase.auth.signOut();
+          console.log({ error, signOutError });
           return;
         }
-        const { user: _user, error } = await userController.getUserWithEmail(authContext.session.user.email);
-        if (error) {
-          router.replace("/");
-          return;
-        }
+        const { user: _user, error: userError } = await userController.getUserWithEmail(data.user.email);
         if (!_user) {
-          router.replace("/");
+          const { error: signOutError } = await supabase.auth.signOut();
+          console.log({ userError, signOutError });
           return;
         }
         setUser(_user);
-        if (achievementController.achievements.length >= 1) {
-          return;
-        }
-        const { data, error: err } = await achievementController.getAllUserAchievements(_user ? _user.id : "");
-        if (err) {
-          console.log({ err });
-        }
-        if (data && data.length >= 1) {
-          setMessage("");
-          setAchievements(data);
-          return;
-        }
-        else {
-          setAchievements([])
-          setMessage("No Achievements earned yet. ");
-        };
-
       }
       fetchAchievements();
     }
-  }, [isFocused, authContext]);
+  }, [isFocused]);
+
+
+  useEffect(() => {
+    if (isFocused) {
+      async function fetchAchievements() {
+        if (!user) {
+          return;
+        }
+        if (user.completed_setup) {
+          // award Responsible achievement
+          // check if user has already earned this achievement
+          const { data, error } = await achievementController.checkEarned(user.id, "Responsible.");
+        }
+        const { data: achievementData, error: achievementError } = await achievementController.getAllUserAchievements(user.id);
+        if (!achievementData || achievementError) {
+          console.log({ achievementData, achievementError });
+          return;
+        }
+        setAchievements(achievementData);
+      }
+      fetchAchievements();
+    }
+  }, [isFocused]);
 
   async function signOut() {
     const { error } = await supabase.auth.signOut();
     console.log({ error });
+    router.push("/");
   }
 
   return (
-    <SafeAreaView style={{ width: '100%', height: '100%' }}>
+    <SafeAreaView style={{ width: '100%', height: '100%', backgroundColor: Colors.slate[100] }}>
       <ScrollView style={{ marginBottom: 40 }}>
         <View style={styles.container}>
           <Button onPress={async () => await signOut()} style={styles.signOutButton}>
@@ -85,11 +90,19 @@ export default function ProfileScreen() {
               <ProfileHeader user={user} styling="big" />
             </View>
           </View>
-          <Text style={styles.sectionHeader}>Achievements</Text>
-          {achievements.length >= 1 ? <ProfileAchievements achievements={achievements} /> : null}
+          {achievements.length >= 1 ?
+            <>
+              <Text style={styles.sectionHeader}>Achievements</Text>
+              <ProfileAchievements achievements={achievements} />
+            </> : null}
           {message ? <Text>{message}</Text> : null}
-          <Text style={styles.sectionHeader}>Gyms</Text>
-          <ProfileGyms user={user} />
+          {user?.isSuperAdmin
+            ? null :
+            <>
+              <Text style={styles.sectionHeader}>Gyms</Text>
+              <ProfileGyms user={user} />
+            </>
+          }
         </View>
       </ScrollView>
     </SafeAreaView>

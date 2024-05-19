@@ -5,8 +5,8 @@ import { useEffect, useState } from "react"
 import { Text, View } from "react-native";
 import { ProfileGym } from "./ProfileGym";
 
+const gymsController: GymController = new GymController();
 export function ProfileGyms({ user }: { user: Tables<"users"> | null }) {
-  const gymsController: GymController = new GymController();
   const [gyms, setGyms] = useState<Tables<"gyms">[]>(gymsController.gyms);
   const isFocused: boolean = useIsFocused();
   useEffect(() => {
@@ -25,7 +25,7 @@ export function ProfileGyms({ user }: { user: Tables<"users"> | null }) {
       }
       fetchGyms();
     }
-  }, [isFocused, gymsController, user])
+  }, [isFocused, user])
   return (
     <View style={{ width: '100%', height: 'auto', paddingBottom: 40, flexWrap: "wrap", paddingTop: 6, flexDirection: "row", display: "flex", justifyContent: "space-evenly", alignItems: "center", alignContent: "center", }}>
       {gyms.length >= 1 ? gyms.map((gym: Tables<"gyms">) => <ProfileGym key={gym.id} gym={gym} />) : <Text>You have not joined any gyms yet.</Text>}

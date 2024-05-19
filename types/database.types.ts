@@ -169,6 +169,7 @@ export type Database = {
           coursesCount: number
           createdAt: string
           description: string
+          frontDesks: string[]
           id: string
           location: string
           logo: string
@@ -187,6 +188,7 @@ export type Database = {
           coursesCount?: number
           createdAt?: string
           description?: string
+          frontDesks?: string[]
           id?: string
           location?: string
           logo?: string
@@ -205,6 +207,7 @@ export type Database = {
           coursesCount?: number
           createdAt?: string
           description?: string
+          frontDesks?: string[]
           id?: string
           location?: string
           logo?: string
@@ -319,82 +322,82 @@ export type Database = {
       }
       users: {
         Row: {
-          age: number | null
-          bmi: number | null
-          completed_setup: boolean | null
+          age: number
+          bmi: number
+          completed_setup: boolean
           createdAt: string
           email: string
-          enrolledCoursesCount: number | null
-          enrolledGymsCount: number | null
-          firstName: string | null
-          gender: Database["public"]["Enums"]["Gender"] | null
-          height: number | null
+          enrolledCoursesCount: number
+          enrolledGymsCount: number
+          firstName: string
+          gender: Database["public"]["Enums"]["Gender"]
+          height: number
           id: string
-          isSuperAdmin: boolean | null
-          lastName: string | null
-          phoneNumber: string | null
-          profileImage: string | null
+          isSuperAdmin: boolean
+          lastName: string
+          phoneNumber: string
+          profileImage: string
           username: string
-          weight: number | null
+          weight: number
         }
         Insert: {
-          age?: number | null
-          bmi?: number | null
-          completed_setup?: boolean | null
+          age?: number
+          bmi?: number
+          completed_setup?: boolean
           createdAt?: string
           email?: string
-          enrolledCoursesCount?: number | null
-          enrolledGymsCount?: number | null
-          firstName?: string | null
-          gender?: Database["public"]["Enums"]["Gender"] | null
-          height?: number | null
+          enrolledCoursesCount?: number
+          enrolledGymsCount?: number
+          firstName?: string
+          gender?: Database["public"]["Enums"]["Gender"]
+          height?: number
           id?: string
-          isSuperAdmin?: boolean | null
-          lastName?: string | null
-          phoneNumber?: string | null
-          profileImage?: string | null
+          isSuperAdmin?: boolean
+          lastName?: string
+          phoneNumber?: string
+          profileImage?: string
           username?: string
-          weight?: number | null
+          weight?: number
         }
         Update: {
-          age?: number | null
-          bmi?: number | null
-          completed_setup?: boolean | null
+          age?: number
+          bmi?: number
+          completed_setup?: boolean
           createdAt?: string
           email?: string
-          enrolledCoursesCount?: number | null
-          enrolledGymsCount?: number | null
-          firstName?: string | null
-          gender?: Database["public"]["Enums"]["Gender"] | null
-          height?: number | null
+          enrolledCoursesCount?: number
+          enrolledGymsCount?: number
+          firstName?: string
+          gender?: Database["public"]["Enums"]["Gender"]
+          height?: number
           id?: string
-          isSuperAdmin?: boolean | null
-          lastName?: string | null
-          phoneNumber?: string | null
-          profileImage?: string | null
+          isSuperAdmin?: boolean
+          lastName?: string
+          phoneNumber?: string
+          profileImage?: string
           username?: string
-          weight?: number | null
+          weight?: number
         }
         Relationships: []
       }
       users_achievements: {
         Row: {
-          achievementId: string | null
+          achievementId: string
           createdAt: string
           id: string
-          userId: string | null
+          userId: string
         }
         Insert: {
-          achievementId?: string | null
+          achievementId: string
           createdAt?: string
           id?: string
-          userId?: string | null
+          userId: string
         }
         Update: {
-          achievementId?: string | null
+          achievementId?: string
           createdAt?: string
           id?: string
-          userId?: string | null
+          userId?: string
         }
         Relationships: [
           {

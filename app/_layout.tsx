@@ -61,7 +61,7 @@ export default function RootLayout() {
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
         <Stack.Screen name="gym_modal" options={{ headerShown: false, presentation: "modal" }} />
         <Stack.Screen name="user_modal" options={{ headerShown: false, presentation: "modal" }} />
-        <Stack.Screen name="complete_setup_modal" options={{ headerShown: false, presentation: "modal" }} />
+        <Stack.Screen name="edit_profile" options={{ headerShown: false, presentation: "modal" }} />
       </Stack>
     </AuthContext>
   );
