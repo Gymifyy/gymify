@@ -282,6 +282,7 @@ export type Database = {
         Row: {
           accepted: boolean
           createdAt: string
+          declined: boolean
           gymId: string
           id: string
           role: Database["public"]["Enums"]["Role"]
@@ -290,6 +291,7 @@ export type Database = {
         Insert: {
           accepted?: boolean
           createdAt?: string
+          declined?: boolean
           gymId: string
           id?: string
           role?: Database["public"]["Enums"]["Role"]
@@ -298,6 +300,7 @@ export type Database = {
         Update: {
           accepted?: boolean
           createdAt?: string
+          declined?: boolean
           gymId?: string
           id?: string
           role?: Database["public"]["Enums"]["Role"]
@@ -307,14 +310,14 @@ export type Database = {
           {
             foreignKeyName: "roles_applications_gymId_fkey"
             columns: ["gymId"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "gyms"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "roles_applications_userId_fkey"
             columns: ["userId"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "users"
             referencedColumns: ["id"]
           },

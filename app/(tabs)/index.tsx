@@ -1,12 +1,10 @@
 import { FlatList, Text, View } from 'react-native';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import Constants from 'expo-constants';
-import { Loader } from '@/components/skeleton';
 import { GymCard } from '@/components/gym';
 import { Colors } from '@/constants';
 import { StyleSheet } from 'react-native';
 import { SearchInput, Header } from "@/components/custom";
-import { User } from '@supabase/supabase-js';
 import { useIsFocused } from '@react-navigation/native';
 import { Tables } from '@/types/database.types';
 import { AuthContextType, AuthStoreContext } from '@/components/custom/context';
@@ -15,9 +13,10 @@ import { GymController } from '@/utils/Gym';
 import { getCurrentPositionAsync } from 'expo-location';
 import { sortBasedOnLocation } from '@/constants/utils';
 import { router } from 'expo-router';
+import { LoadingFlatList } from '@/components/custom/LoadingFlatList';
 
 export default function HomeScreen() {
-  const [user, setUser] = useState<User & Omit<Tables<"users">, "email" | "id" | "createdAt"> | null>(null);
+  const [user, setUser] = useState<Tables<"users"> | null>(null);
   const [isReadyToRender, setIsReadyToRender] = useState<boolean>(false);
   const [gyms, setGyms] = useState<Tables<"gyms">[]>([]);
   const [allGymsCopy, setAllGymsCopy] = useState<Tables<"gyms">[]>(gyms);
@@ -25,7 +24,7 @@ export default function HomeScreen() {
 
   const isFocused = useIsFocused();
   const gymController: GymController = new GymController();
-  const saveRendersTemp: User | null = user;
+  const saveRendersTemp: Tables<"users"> | null = user;
   const currentIndexes = { from: 0, to: 9 };
 
   // Auth Handler
@@ -36,6 +35,7 @@ export default function HomeScreen() {
         if (AuthContextStore.session.user.email === saveRendersTemp?.email) return;
         const { data: _user, error } = await supabase.from("users").select("*").eq("email", AuthContextStore.session.user.email as string).limit(1).single();
         if (_user) {
+          setUser(_user);
           if (_user.isSuperAdmin && !_user.completed_setup) {
             // if setup not completed and is super admin
             router.push({
@@ -43,10 +43,8 @@ export default function HomeScreen() {
               params: {
                 user: JSON.stringify(_user),
               },
-            }
-            );
+            });
           }
-          setUser({ ...AuthContextStore.session.user, ..._user });
         }
         if (error) console.log({ error, component: 'Header' });
       }
@@ -73,9 +71,7 @@ export default function HomeScreen() {
             setGyms(value);
             setAllGymsCopy(value);
           });
-          setTimeout(() => {
-            setIsReadyToRender(true);
-          }, 1000);
+          setIsReadyToRender(true);
         }
       }
       fetchGyms();
@@ -91,16 +87,10 @@ export default function HomeScreen() {
     setGyms(filteredGyms);
   }, [gyms]);
 
-  function renderItem({ item, index }: { item: Tables<"gyms">, index: number }) {
+  function renderItem({ item }: { item: Tables<"gyms"> }) {
     return (
-      <View style={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>{
-        isReadyToRender ?
-          <GymCard gym={item} index={index} />
-          :
-          <View style={{ paddingVertical: 6, alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-            <Loader colorMode="light" width={"85%"} height={88} />
-          </View>
-      }
+      <View style={{ alignItems: 'center', alignContent: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+        <GymCard user={user} gym={item} clickable={true} />
       </View>
     )
   }
@@ -112,8 +102,8 @@ export default function HomeScreen() {
     <View style={{ width: '100%', height: '100%' }}>
       <View style={styles.container}>
         <Header />
-        <SearchInput handleGymFilterByName={handleGymFilterByName} />
-        {gyms && gyms.length >= 1 ?
+        <SearchInput handleSearchInput={handleGymFilterByName} />
+        {isReadyToRender ? gyms && gyms.length >= 1 ?
           <>
             <FlatList
               data={gyms}
@@ -131,6 +121,8 @@ export default function HomeScreen() {
           <View>
             <Text style={styles.noGymsText}>Could not find any nearby gyms. </Text>
           </View>
+          :
+          <LoadingFlatList length={4} />
         }
       </View>
     </View>

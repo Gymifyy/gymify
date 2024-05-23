@@ -6,11 +6,11 @@ import { useState } from 'react';
 import { DebouncedState, useDebounceCallback } from 'usehooks-ts';
 
 interface Props {
-  handleGymFilterByName: (value: string) => void;
+  handleSearchInput: (value: string) => void;
 }
 
-export function SearchInput({ handleGymFilterByName }: Props): React.JSX.Element {
-  const debounced: DebouncedState<(value: string) => void> = useDebounceCallback(handleGymFilterByName, 230);
+export function SearchInput({ handleSearchInput }: Props): React.JSX.Element {
+  const debounced: DebouncedState<(value: string) => void> = useDebounceCallback(handleSearchInput, 230);
   const [sTerm, setSTerm] = useState<string>("");
   function handleSearchInputDebounce(sTerm: string) {
     debounced.cancel();

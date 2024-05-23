@@ -2,19 +2,20 @@ import { ScrollView, StyleSheet, View } from "react-native";
 import { Dispatch, SetStateAction } from "react";
 import { Tables } from "@/types/database.types";
 import { AnimatePresence } from "moti";
-import { Text } from "react-native";
 // Rendered Tabs
 import { ModalTab } from "../ModalTab";
 import { UserTabOverview } from "./UserTabOverview";
 import { UserTabActions } from "./UserTabActions";
+import { UserTabGyms } from "./UserTabGyms";
 
 type ModalTabsProps = {
-  chosenTab: "overview" | "gyms" | "actions" | "contact",
-  setChosenTab: Dispatch<SetStateAction<"overview" | "gyms" | "actions" | "contact">>,
+  chosenTab: "overview" | "gyms" | "actions",
+  setChosenTab: Dispatch<SetStateAction<"overview" | "gyms" | "actions">>,
   user: Tables<"users"> | null,
+  gymId: string,
 };
 
-export function UserTabs({ setChosenTab, chosenTab, user, }: ModalTabsProps) {
+export function UserTabs({ setChosenTab, chosenTab, user, gymId }: ModalTabsProps) {
   return (
     <>
       <View style={styles.scrollerWrapper}>
@@ -23,14 +24,14 @@ export function UserTabs({ setChosenTab, chosenTab, user, }: ModalTabsProps) {
             <ModalTab tab={"overview"} setChosenTab={setChosenTab} chosenTab={chosenTab} />
             <ModalTab tab={"gyms"} setChosenTab={setChosenTab} chosenTab={chosenTab} />
             <ModalTab tab={"actions"} setChosenTab={setChosenTab} chosenTab={chosenTab} />
-            <ModalTab tab={"contact"} setChosenTab={setChosenTab} chosenTab={chosenTab} />
           </View>
         </ScrollView>
       </View>
       <View style={styles.addInfo}>
         <AnimatePresence exitBeforeEnter>
           {chosenTab === "overview" ? <UserTabOverview user={user} /> : null}
-          {chosenTab === "actions" ? <UserTabActions user={user} /> : null}
+          {chosenTab === "gyms" ? <UserTabGyms user={user} /> : null}
+          {chosenTab === "actions" ? <UserTabActions user={user} gymId={gymId} /> : null}
         </AnimatePresence>
       </View>
     </>

@@ -19,8 +19,9 @@ export default function UserModal() {
   const authStoreContext = useContext(AuthStoreContext);
   const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState<Tables<"users"> | null>(null);
-  const [activeTab, setActiveTab] = useState<"overview" | "contact" | "actions" | "gyms">("overview");
-  const params = useLocalSearchParams<{ user?: string }>()
+  const [gymId, setGymId] = useState<string>("");
+  const [activeTab, setActiveTab] = useState<"overview" | "actions" | "gyms">("overview");
+  const params = useLocalSearchParams<{ user?: string, gymId: string }>()
   const isFocused: boolean = useIsFocused();
 
 
@@ -53,6 +54,7 @@ export default function UserModal() {
       if (!params.user) return;
       if (!authStoreContext.session?.user.user_metadata.isSuperAdmin) return router.push("/");
       const parsedUser = JSON.parse(params.user) as ParamUserType;
+      setGymId(params.gymId ? params.gymId : "");
       // make query to db to get user with Id
       const { data, error } = await userController.getUserById(parsedUser.id)
       if (error) console.log({ error, component: "User_Modal" });
@@ -99,7 +101,7 @@ export default function UserModal() {
       animate={{ opacity: 1, left: 0 }}
     >
       <Header />
-        <UserTabs user={user} setChosenTab={setActiveTab} chosenTab={activeTab} />
+      <UserTabs user={user} setChosenTab={setActiveTab} chosenTab={activeTab} gymId={gymId} />
     </MotiView>
   )
 }

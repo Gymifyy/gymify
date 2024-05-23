@@ -120,7 +120,6 @@ export function SignUpTab() {
         if (!user) return;
         const { error: err } = await roleController.applyForAdditionalRole(role, chosenGym, user.id);
         console.log({ err });
-
       }
       setUserInfo({
         id: "",

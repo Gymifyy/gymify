@@ -9,18 +9,19 @@ import { Colors } from '@/constants';
 import { Loader } from '@/components/skeleton';
 import { GymTabs } from '@/components/gym_modal';
 import { AuthStoreContext } from '@/components/custom/context';
-import { User } from '@supabase/supabase-js';
 import { UserController } from '@/utils/User';
 import { GymController } from '@/utils/Gym';
+import { RoleController } from '@/utils/Role';
 
 const userController: UserController = new UserController();
 const gymController: GymController = new GymController();
+const roleController: RoleController = new RoleController();
 const usersController: UserController = new UserController();
 export default function GymModal() {
   const authStoreContext = useContext(AuthStoreContext);
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<Tables<"users"> | null>(null);
   const [gym, setGym] = useState<Tables<"gyms">>();
-  const [activeTab, setActiveTab] = useState<"overview" | "prices" | "location" | "users">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "prices" | "location" | "users" | "applies">("overview");
   const [images, setImages] = useState<string[]>([]);
   const [gymLocation, setGymLocation] = useState<LocationGeocodedAddress | null>(null);
   const [gymUsers, setGymUsers] = useState<{ id: string; username: string; email: string; profileImage: string | null; }[] | null>([]);
@@ -29,14 +30,17 @@ export default function GymModal() {
   const [isJoiningGym, setIsJoiningGym] = useState<boolean>(false);
   const [isMember, setIsMember] = useState<boolean>(false);
   const [error, setError] = useState<string>("");
-  const params = useLocalSearchParams<{ gym?: string }>()
+  const [roles, setRoles] = useState<Tables<"roles_applications">[]>([]);
+  const params = useLocalSearchParams<{ gym?: string, user?: string }>()
   const isFocused: boolean = useIsFocused();
 
   // Auth Handler
   useEffect(() => {
     async function getUser() {
       if (authStoreContext.session) {
-        setUser({ ...authStoreContext.session.user });
+        if (!params.user) return;
+        const parsedUser = JSON.parse(params.user) as Tables<"users">;
+        setUser(parsedUser);
       }
       else setUser(null);
     }
@@ -72,6 +76,25 @@ export default function GymModal() {
     if (isFocused) getGymProps();
   }, [params.gym, isFocused]);
 
+  // Check authed user role for this gym
+  useEffect(() => {
+    if (isFocused) {
+      async function fetchRole() {
+        if (!user) return;
+        if (!gym) return;
+        const { data, error } = await roleController.getApplicationsInGym(user.id, gym.id);
+        if (error) console.log({ error });
+        if (data) {
+          setRoles(data);
+          console.log({ data })
+        };
+        return;
+      }
+      fetchRole();
+    }
+  }, [user?.id, isFocused, gym?.id])
+
+  // check joined status
   useEffect(() => {
     async function checkJoinedStatus() {
       if (!user) return;
@@ -145,6 +168,7 @@ export default function GymModal() {
           <GymTabs
             chosenTab={activeTab}
             setChosenTab={setActiveTab}
+            roles={roles}
             user={user}
             gym={gym}
             error={error}

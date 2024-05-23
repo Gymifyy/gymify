@@ -6,14 +6,25 @@ import { StyleSheet, Text, View } from "react-native";
 import { Button } from "../skeleton";
 import { Octicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { useCallback, useEffect, useState } from "react";
+import { useIsFocused } from "@react-navigation/native";
+import { SearchInput } from "../custom";
 
 export function RenderUsersTab({ gym, users }: { gym: Tables<"gyms"> | undefined, users: { id: string; username: string; email: string; profileImage: string | null; }[] | null }) {
+  const [copiedUsers, setCopiedUsers] = useState<typeof users>([]);
+  const isFocused: boolean = useIsFocused();
+  useEffect(() => {
+    if (isFocused) {
+      setCopiedUsers(users);
+    }
+  }, [isFocused, users]);
 
   function navigateToUserModal(user: { id: string, username: string, email: string, profileImage: string | null }) {
     router.push({
       pathname: "/user_modal",
       params: {
         user: JSON.stringify(user),
+        gymId: gym?.id,
       },
     });
     return;
@@ -54,6 +65,23 @@ export function RenderUsersTab({ gym, users }: { gym: Tables<"gyms"> | undefined
   function renderItemLayout(_: any, index: number) {
     return { length: 350, offset: 84 * index, index };
   }
+
+  const searchUsers = useCallback((value: string) => {
+    if (value.trim() === "") {
+      setCopiedUsers(users)
+      return;
+    }
+    if (users === null) {
+      setCopiedUsers(users)
+      return;
+    }
+    // filter
+    const filteredUsers = users.filter((user) => user.username.includes(value.toLowerCase())
+      || user.username.startsWith(value)
+      || user.username.startsWith(value.toLowerCase())
+      || user.username.startsWith(value.toUpperCase()));
+    setCopiedUsers(filteredUsers);
+  }, [users]);
   return (
     <MotiView
       style={styles.overviewTab}
@@ -62,20 +90,18 @@ export function RenderUsersTab({ gym, users }: { gym: Tables<"gyms"> | undefined
     >
       {users && users.length >= 1 ? <Text style={styles.info}>{users.length} registered users</Text> : <Text style={styles.info}>No users are registered in this gym yet.</Text>}
       {/* TODO: Search functionality */}
-      <Text>Search here ...</Text>
-      {users && users.length >= 1 ?
-        <FlatList
-          data={users}
-          style={styles.gymsList}
-          initialNumToRender={8}
-          removeClippedSubviews={true}
-          maxToRenderPerBatch={10}
-          windowSize={8}
-          getItemLayout={renderItemLayout}
-          keyExtractor={renderItemKey}
-          renderItem={renderItem}
-        />
-        : null}
+      <SearchInput handleSearchInput={searchUsers} />
+      <FlatList
+        data={copiedUsers}
+        style={styles.gymsList}
+        initialNumToRender={8}
+        removeClippedSubviews={true}
+        maxToRenderPerBatch={10}
+        windowSize={8}
+        getItemLayout={renderItemLayout}
+        keyExtractor={renderItemKey}
+        renderItem={renderItem}
+      />
     </MotiView>
   )
 }

@@ -11,11 +11,14 @@ import { router } from "expo-router";
 
 type Props = {
   gym: Tables<"gyms">,
-  index: number,
+  user?: Tables<"users"> | null,
+  clickable?: boolean,
 }
 
 export const GymCard = memo(function _Card({
   gym,
+  user,
+  clickable
 }: Props): React.JSX.Element {
   const [loc, setLoc] = useState<LocationGeocodedAddress | null>(null);
   useEffect(() => {
@@ -26,13 +29,17 @@ export const GymCard = memo(function _Card({
     }
     getLocation();
   }, [gym.location]);
+
   function goToGymPage() {
-    router.push({
-      pathname: "/gym_modal",
-      params: {
-        gym: JSON.stringify(gym),
-      },
-    });
+    if (clickable) {
+      router.push({
+        pathname: "/gym_modal",
+        params: {
+          gym: JSON.stringify(gym),
+          user: JSON.stringify(user),
+        },
+      });
+    }
     return;
   }
   return (

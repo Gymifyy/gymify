@@ -8,7 +8,7 @@ import { useEffect } from 'react';
 import 'react-native-url-polyfill/auto'
 import { AuthContext } from '@/components/custom/context';
 export { ErrorBoundary } from 'expo-router';
-
+import { RootSiblingParent } from 'react-native-root-siblings';
 export const unstable_settings = {
   // Ensure that reloading on `/modal` keeps a back button present.
   initialRouteName: '(tabs)',
@@ -57,12 +57,14 @@ export default function RootLayout() {
 
   return (
     <AuthContext>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="gym_modal" options={{ headerShown: false, presentation: "modal" }} />
-        <Stack.Screen name="user_modal" options={{ headerShown: false, presentation: "modal" }} />
-        <Stack.Screen name="edit_profile" options={{ headerShown: false, presentation: "modal" }} />
-      </Stack>
+      <RootSiblingParent>
+        <Stack>
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="gym_modal" options={{ headerShown: false, presentation: "modal" }} />
+          <Stack.Screen name="user_modal" options={{ headerShown: false, presentation: "modal" }} />
+          <Stack.Screen name="edit_profile" options={{ headerShown: false, presentation: "modal" }} />
+        </Stack>
+      </RootSiblingParent>
     </AuthContext>
   );
 }

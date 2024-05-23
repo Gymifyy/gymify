@@ -5,48 +5,59 @@ import { MotiView } from "moti";
 import { Image, StyleSheet, Text, View } from "react-native";
 import { Button } from "../skeleton";
 import { Octicons } from "@expo/vector-icons";
+import { RenderContactTab } from "./RenderContactTab";
 
-export function RenderOverviewTab({ gym, joinGym, isLoading, isSuperAdmin, isMember }: { gym: Tables<"gyms"> | undefined, joinGym: () => void, isLoading: boolean, isMember: boolean, isSuperAdmin: boolean }) {
+export function RenderOverviewTab({ gym, joinGym, isLoading, isSuperAdmin, isMember, error }: { gym: Tables<"gyms"> | undefined, error: string, joinGym: () => void, isLoading: boolean, isMember: boolean, isSuperAdmin: boolean }) {
   return (
-    <MotiView
-      style={styles.overviewTab}
-      from={{ opacity: 0, left: -50 }}
-      animate={{ opacity: 1, left: 0 }}
-    >
-      <Text style={styles.description}>
-        {gym?.description}
-      </Text>
-      <Text style={styles.description}>
-        <Text style={{ ...styles.description, color: Colors.theme_orange, fontWeight: "600" }}>
-          {gym?.coaches.length} {' '}
+    <>
+      <MotiView
+        style={styles.overviewTab}
+        from={{ opacity: 0, left: -50 }}
+        animate={{ opacity: 1, left: 0 }}
+      >
+        <Text style={styles.description}>
+          {gym?.description}
         </Text>
-        coaches
-      </Text>
-      <Text style={styles.description}>
-        <Text style={{ ...styles.description, color: Colors.theme_orange, fontWeight: "600" }}>
-          {gym?.membersCount} {' '}
+        <Text style={styles.description}>
+          <Text style={{ ...styles.description, color: Colors.theme_orange, fontWeight: "600" }}>
+            {gym?.coaches.length} {' '}
+          </Text>
+          coaches
         </Text>
-        members
-      </Text>
-      {isLoading ? <View style={{ height: 100, width: "100%", alignSelf: "center", justifyContent: "center", alignItems: "center", alignContent: "center", }}>
-        <Image style={{ height: 100 }} source={require("@/assets/loading_animation.gif")} alt={"Loading Animation"} />
-      </View> : null}
-      {isSuperAdmin || isMember ? null : (
-        <Button onPress={joinGym} style={styles.joinButton}>
-          <Octicons size={19} color={Colors.slate[100]} name={"plus"} />
-          <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Join</Text>
-        </Button>
-      )}
-      {isMember ?
-        <Button onPress={() => {}} style={styles.joinButton}>
-          <Octicons size={19} color={Colors.slate[100]} name={"check"} />
-          <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Joined</Text>
-        </Button>
-        : null}
-      <Text style={{ ...styles.description, alignSelf: 'flex-end', }}>
-        {dayjs(gym?.createdAt).format("DD MMMM YYYY").toString()}
-      </Text>
-    </MotiView>
+        <Text style={styles.description}>
+          <Text style={{ ...styles.description, color: Colors.theme_orange, fontWeight: "600" }}>
+            {gym?.membersCount} {' '}
+          </Text>
+          members
+        </Text>
+        {isLoading ? <View style={{ height: 100, width: "100%", alignSelf: "center", justifyContent: "center", alignItems: "center", alignContent: "center", }}>
+          <Image style={{ height: 100 }} source={require("@/assets/loading_animation.gif")} alt={"Loading Animation"} />
+        </View> : null}
+        {isSuperAdmin || isMember ? null : (
+          <Button onPress={joinGym} style={styles.joinButton}>
+            <Octicons size={19} color={Colors.slate[100]} name={"plus"} />
+            <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Join</Text>
+          </Button>
+        )}
+        {isMember ?
+          <Button onPress={() => { }} style={styles.joinButton}>
+            <Octicons size={19} color={Colors.slate[100]} name={"check"} />
+            <Text style={{ color: Colors.slate[100], fontWeight: "600", letterSpacing: 0.7, fontSize: 16, }}>Joined</Text>
+          </Button>
+          : null}
+        <Text style={{ ...styles.description, alignSelf: 'flex-end', }}>
+          {dayjs(gym?.createdAt).format("DD MMMM YYYY").toString()}
+        </Text>
+      </MotiView>
+
+      {
+        error ?
+          <Text style={{ fontSize: 19, fontWeight: "500", color: Colors.red[600] }}>
+            {error}
+          </Text> : null
+      }
+      <RenderContactTab gym={gym} />
+    </>
   )
 }
 

@@ -12,13 +12,6 @@ export function UserTabOverview({ user }: { user: Tables<"users"> | null }) {
     >
       <Text style={styles.additionalInfoText}>Additional Info</Text>
       <ProfileHeader user={user} styling={"small"} />
-      <Text style={{ fontSize: 19, letterSpacing: 0.8, paddingVertical: 10, }}>
-        Registered in
-        {' '}
-        <Text style={{ fontSize: 19, }}>{user?.enrolledGymsCount}</Text>
-        {' '}
-        gyms
-      </Text>
     </MotiView>
   );
 }
