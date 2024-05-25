@@ -2,7 +2,7 @@ import { router } from "expo-router";
 import { useContext, useEffect, useState } from "react";
 import { SafeAreaView, StyleSheet, Text } from "react-native";
 import { View } from "react-native";
-import { AuthStoreContext } from "@/components/custom/context";
+import { AuthContextType, AuthStoreContext } from "@/components/custom/context";
 import { AchievementController } from "@/utils/Achievements";
 import { ProfileImage, ProfileAchievements, ProfileHeader, ProfileUsername, ProfileGyms } from "@/components/profile";
 import { Colors } from "@/constants";
@@ -24,6 +24,28 @@ export default function ProfileScreen() {
   const [user, setUser] = useState<Tables<"users"> | null>(null);
   const [message, setMessage] = useState<string>("");
   const isFocused = useIsFocused();
+  const AuthContextStore = useContext<AuthContextType>(AuthStoreContext);
+
+  const saveRendersTemp: Tables<"users"> | null = user;
+
+  // Auth Handler
+  useEffect(() => {
+    async function getUser() {
+      if (AuthContextStore.session) {
+        // save re-renders 
+        if (AuthContextStore.session.user.email === saveRendersTemp?.email) return;
+        const { data: _user, error } = await supabase.from("users").select("*").eq("email", AuthContextStore.session.user.email as string).limit(1).single();
+        if (_user) {
+          setUser(_user);
+        }
+        if (error) console.log({ error, component: 'Profile' });
+      }
+      else setUser(null);
+    }
+    if (isFocused) {
+      getUser();
+    }
+  }, [isFocused])
 
   useEffect(() => {
     if (isFocused) {
@@ -36,8 +58,7 @@ export default function ProfileScreen() {
         }
         const { user: _user, error: userError } = await userController.getUserWithEmail(data.user.email);
         if (!_user) {
-          const { error: signOutError } = await supabase.auth.signOut();
-          console.log({ userError, signOutError });
+          console.log({ userError });
           return;
         }
         setUser(_user);
@@ -59,10 +80,10 @@ export default function ProfileScreen() {
           const { data, error } = await achievementController.checkEarned(user.id, "Responsible.");
         }
         const { data: achievementData, error: achievementError } = await achievementController.getAllUserAchievements(user.id);
-        if (!achievementData || achievementError) {
-          console.log({ achievementData, achievementError });
+        if (achievementError) {
           return;
         }
+        if (!achievementData) return;
         setAchievements(achievementData);
       }
       fetchAchievements();

@@ -86,7 +86,6 @@ export default function GymModal() {
         if (error) console.log({ error });
         if (data) {
           setRoles(data);
-          console.log({ data })
         };
         return;
       }

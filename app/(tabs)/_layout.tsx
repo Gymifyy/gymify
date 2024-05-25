@@ -91,7 +91,7 @@ export default function TabLayout() {
           title: "Roles",
           tabBarStyle: TabBarStyle,
           tabBarIcon: ({ color }) => <TabBarIcon name="id-badge" color={color} />,
-          href: AuthContextStore.session?.user || AuthContextStore.session?.user.user_metadata.isSuperAdmin ? "/requests" : null,
+          href: AuthContextStore.session?.user && AuthContextStore.session?.user.user_metadata.isSuperAdmin ? "/requests" : null,
         }}
       />
       <Tabs.Screen
